@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>อัลบั้มของเรา ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@300;400;600&family=Itim&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night-0:#070b1e;--night-1:#0d1330;--night-2:#1a1b42;--nebula:#2a1f4d;
+  --star-gold:#f4d58d;--rose:#f0a6c0;--text:#efe9ff;--muted:#9296c0;--glass:rgba(20,24,58,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{font-family:'Sarabun',system-ui,sans-serif;color:var(--text);min-height:100vh;
+  padding:64px 18px 48px;
+  background:
+    radial-gradient(120% 70% at 50% -10%, var(--nebula) 0%, rgba(42,31,77,0) 55%),
+    radial-gradient(140% 100% at 80% 110%, #241a44 0%, rgba(36,26,68,0) 50%),
+    linear-gradient(180deg, var(--night-1) 0%, var(--night-0) 60%, #05060f 100%) fixed;}
+canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.home-link{position:fixed;top:14px;left:14px;z-index:20;padding:8px 14px;border-radius:100px;
+  background:var(--glass);border:1px solid rgba(240,166,192,.25);color:var(--text);
+  backdrop-filter:blur(8px);font-family:'Sarabun',sans-serif;font-size:13px;text-decoration:none;
+  transition:transform .3s,background .3s}
+.home-link:hover{transform:translateY(-1px);background:rgba(240,166,192,.18)}
+.home-link:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+
+.wrap{position:relative;z-index:2;max-width:620px;margin:0 auto}
+.head{text-align:center;margin-bottom:8px}
+.head .welcome{font-family:'Itim',cursive;color:var(--rose);font-size:17px}
+.head h1{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(24px,6.5vw,32px);
+  text-shadow:0 0 24px rgba(244,213,141,.25)}
+.head .sub{color:var(--muted);font-size:13.5px;margin-top:4px}
+
+.section-label{font-family:'Prompt',sans-serif;font-size:12.5px;color:var(--star-gold);
+  letter-spacing:.05em;margin:30px 4px 14px;opacity:.9}
+
+/* ---------- เครื่องเล่นเพลง ---------- */
+.player{background:linear-gradient(160deg,rgba(26,27,66,.7),rgba(13,19,48,.7));
+  border:1px solid rgba(240,166,192,.22);border-radius:20px;padding:14px;overflow:hidden}
+.player .pt{font-family:'Prompt',sans-serif;font-size:14px;margin:2px 4px 10px;color:#fbeede}
+.player .pt small{color:var(--muted);font-weight:300}
+.player iframe{width:100%;border:0;border-radius:12px;display:block}
+
+/* ---------- โพลารอยด์ ---------- */
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px;margin-top:4px}
+@media(min-width:560px){.gallery{grid-template-columns:1fr 1fr 1fr}}
+.polaroid{background:#fbf7ef;border-radius:6px;padding:10px 10px 0;position:relative;
+  box-shadow:0 10px 26px rgba(0,0,0,.4);transform:rotate(var(--rot,-2deg));
+  transition:transform .3s ease}
+.polaroid:hover,.polaroid:focus-within{transform:rotate(0deg) scale(1.03);z-index:3}
+.polaroid::before{content:"";position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-3deg);
+  width:56px;height:20px;background:rgba(244,213,141,.5);border:1px solid rgba(244,213,141,.35);
+  border-radius:2px}
+.polaroid .pic{width:100%;aspect-ratio:1/1;border-radius:3px;overflow:hidden;background:#e9e2d3;
+  display:flex;align-items:center;justify-content:center;text-align:center}
+.polaroid .pic img{width:100%;height:100%;object-fit:cover;display:block}
+.polaroid .pic .ph{color:#a99f8c;font-size:12px;padding:8px;line-height:1.5;font-family:'Itim',cursive}
+.polaroid .cap{color:#6a5f52;font-family:'Itim',cursive;font-size:13px;text-align:center;
+  padding:8px 4px 12px;line-height:1.4}
+.hint{color:var(--muted);font-size:12px;text-align:center;margin-top:22px;opacity:.8}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<a class="home-link" href="index.html">← หน้าหลัก</a>
+
+<div class="wrap">
+  <div class="head">
+    <div class="welcome">เก็บไว้ดูด้วยกันนะ</div>
+    <h1>อัลบั้มของเรา ✦</h1>
+    <div class="sub">รูปความทรงจำ + เพลงของเรา 🌙</div>
+  </div>
+
+  <div class="section-label">🎵 เพลงของเรา</div>
+  <div class="player" id="player">
+    <div class="pt" id="playerTitle"></div>
+    <div id="playerEmbed"></div>
+  </div>
+
+  <div class="section-label">📸 รูปของเรา</div>
+  <div class="gallery" id="gallery"></div>
+
+  <div class="hint" id="hint"></div>
+</div>
+
+<script>
+/* ============================================================================
+   แก้ตรงนี้ได้เลย
+   ============================================================================ */
+const ALBUM = {
+  // ----- เพลง -----
+  music: {
+    title: "ดวงดาวแห่งรัก",          // ชื่อเพลงที่โชว์
+    artist: "Dr.Fuu",                // ศิลปิน
+    // ถ้ามีลิงก์ Spotify ให้วางตรงนี้ (เช่น https://open.spotify.com/track/xxxx) — ระบบจะใช้ Spotify
+    spotify: "",
+    // ถ้าไม่ใส่ Spotify จะเล่นจาก YouTube ทางการ (ใส่รหัสวิดีโอ)
+    youtubeId: "jpmYW8swW58"
+  },
+
+  // ----- รูปโพลารอยด์ -----
+  // url:"" = ยังไม่มีรูป (จะขึ้นกรอบเปล่ารอใส่) ; ใส่ลิงก์รูปเมื่อไหร่ก็ได้
+  photos: [
+    { url:"", caption:"รูปของหนู ✦" },
+    { url:"", caption:"ครั้งแรกที่เราเจอกัน" },
+    { url:"", caption:"ที่ที่อยากไปด้วยกัน" },
+    { url:"", caption:"รอยยิ้มที่พี่ชอบ" },
+    { url:"", caption:"วันสบาย ๆ ของเรา" },
+    { url:"", caption:"รูปโปรดของพี่ 🤍" }
+  ]
+};
+
+/* ---------- ท้องฟ้าพื้นหลัง ---------- */
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
+let W,H,DPR,stars=[],t=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
+  cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+  stars=[];const n=Math.round(innerWidth*innerHeight/3200);
+  for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,
+    r:(Math.random()*1.1+.25)*DPR,tw:Math.random()*6.28,sp:Math.random()*.02+.005,d:Math.random()*.5+.5});}
+addEventListener('resize',resize);resize();
+(function loop(){t+=reduce?0:1;ctx.clearRect(0,0,W,H);
+  for(const s of stars){const tw=reduce?.7:(Math.sin(t*s.sp+s.tw)*.4+.6);
+    ctx.fillStyle="rgba(230,235,255,"+(tw*s.d)+")";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();}
+  requestAnimationFrame(loop);})();
+
+/* ---------- เครื่องเล่นเพลง ---------- */
+(function(){
+  const m=ALBUM.music;
+  document.getElementById('playerTitle').innerHTML=m.title+' <small>· '+m.artist+'</small>';
+  const box=document.getElementById('playerEmbed');
+  if(m.spotify){
+    let src=m.spotify;
+    if(src.indexOf('open.spotify.com')>-1 && src.indexOf('/embed')===-1)
+      src=src.replace('open.spotify.com/','open.spotify.com/embed/');
+    box.innerHTML='<iframe style="height:152px" src="'+src+'" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture" loading="lazy"></iframe>';
+  }else{
+    box.innerHTML='<iframe style="height:200px" src="https://www.youtube-nocookie.com/embed/'+m.youtubeId+'?rel=0" allow="accelerometer; autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+  }
+})();
+
+/* ---------- โพลารอยด์ ---------- */
+const g=document.getElementById('gallery');
+ALBUM.photos.forEach((p,i)=>{
+  const rot=(i%2===0?-2.5:2.5)+(Math.random()*1.5-0.75);
+  const card=document.createElement('div');card.className='polaroid';card.style.setProperty('--rot',rot+'deg');
+  card.tabIndex=0;
+  const pic = p.url
+    ? '<div class="pic"><img src="'+p.url+'" alt="'+(p.caption||'')+'" loading="lazy"></div>'
+    : '<div class="pic"><span class="ph">รอรูปของเรา<br>📷 ✦</span></div>';
+  card.innerHTML=pic+'<div class="cap">'+(p.caption||'')+'</div>';
+  g.appendChild(card);
+});
+
+const hasPhoto=ALBUM.photos.some(p=>p.url);
+document.getElementById('hint').textContent = hasPhoto
+  ? '✦ แตะรูปเพื่อดูใกล้ ๆ'
+  : 'ยังไม่มีรูปก็ไม่เป็นไรนะ ✦ ใส่ลิงก์รูปในบล็อก ALBUM.photos เมื่อไหร่ก็ได้';
+</script>
+</body>
+</html>
