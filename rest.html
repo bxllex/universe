@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>มุมพักใจของหนู ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@300;400;600&family=Itim&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night-0:#070b1e;--night-1:#0d1330;--night-2:#1a1b42;--nebula:#2a1f4d;
+  --star-gold:#f4d58d;--rose:#f0a6c0;--text:#efe9ff;--muted:#9296c0;--glass:rgba(20,24,58,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Sarabun',system-ui,sans-serif;color:var(--text);position:fixed;inset:0;
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--nebula) 0%, rgba(42,31,77,0) 55%),
+    radial-gradient(140% 120% at 80% 110%, #241a44 0%, rgba(36,26,68,0) 50%),
+    linear-gradient(180deg, var(--night-1) 0%, var(--night-0) 60%, #05060f 100%);}
+canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+
+.home-link,.sound{position:fixed;top:14px;z-index:20;padding:8px 14px;border-radius:100px;
+  background:var(--glass);border:1px solid rgba(240,166,192,.25);color:var(--text);
+  backdrop-filter:blur(8px);font-family:'Sarabun',sans-serif;font-size:13px;text-decoration:none;
+  cursor:pointer;transition:transform .3s,background .3s}
+.home-link{left:14px}.sound{right:14px;width:40px;height:40px;display:flex;align-items:center;
+  justify-content:center;font-size:17px;padding:0}
+.home-link:hover,.sound:hover{transform:translateY(-1px);background:rgba(240,166,192,.18)}
+.home-link:focus-visible,.sound:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+
+.screen{position:fixed;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;
+  justify-content:center;padding:70px 24px 30px;text-align:center}
+.screen.on{display:flex;animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:20;color:var(--muted);
+  background:none;border:none;font-family:'Sarabun';font-size:13.5px;cursor:pointer}
+.back:hover{color:var(--text)}
+
+h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(22px,5.6vw,30px);
+  text-shadow:0 0 24px rgba(244,213,141,.25)}
+.lead{color:var(--muted);font-size:14px;margin-top:6px;max-width:22em}
+
+/* ---------- เมนูมุมพักใจ ---------- */
+#menu .welcome{font-family:'Itim',cursive;color:var(--rose);font-size:17px;margin-bottom:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;width:100%;max-width:440px}
+.corner{background:linear-gradient(160deg,rgba(26,27,66,.7),rgba(13,19,48,.7));
+  border:1px solid rgba(240,166,192,.2);border-radius:18px;padding:18px 12px;cursor:pointer;
+  color:var(--text);display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:transform .25s,border-color .25s,box-shadow .25s}
+.corner:hover{transform:translateY(-3px);border-color:rgba(240,166,192,.5);
+  box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 20px rgba(240,166,192,.12)}
+.corner:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+.corner .em{font-size:30px}
+.corner .cn{font-family:'Prompt',sans-serif;font-size:14px;font-weight:500}
+.corner .cd{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* ---------- ปุ่มทั่วไป ---------- */
+.btn{font-family:'Sarabun',sans-serif;font-size:16px;color:var(--night-0);
+  background:linear-gradient(135deg,#f7e0a8,#f0a6c0);border:none;border-radius:100px;
+  padding:14px 30px;cursor:pointer;margin-top:22px;
+  box-shadow:0 8px 30px rgba(240,166,192,.28);transition:transform .3s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--star-gold);outline-offset:3px}
+
+/* ---------- หายใจ ---------- */
+.breath-wrap{margin:30px 0 10px;display:flex;align-items:center;justify-content:center;height:230px}
+.breath{width:130px;height:130px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,rgba(244,213,141,.5),rgba(240,166,192,.28));
+  box-shadow:0 0 50px rgba(240,166,192,.35);transition:transform 4s ease-in-out;
+  display:flex;align-items:center;justify-content:center}
+.breath.inhale{transform:scale(1.7)}
+.breath span{font-family:'Itim',cursive;font-size:16px;color:#fff}
+
+/* ---------- ปล่อยความเหนื่อย ---------- */
+#release textarea{width:100%;max-width:360px;height:96px;resize:none;margin-top:18px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:16px;
+  color:var(--text);padding:14px 16px;font-family:'Sarabun',sans-serif;font-size:15px;outline:none}
+#release textarea:focus{border-color:rgba(240,166,192,.5)}
+.floatword{position:fixed;left:50%;bottom:32%;transform:translateX(-50%);z-index:9;
+  font-family:'Itim',cursive;color:var(--rose);font-size:18px;max-width:80%;text-align:center;
+  pointer-events:none;animation:floatUp 3.4s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,0) scale(.9)}
+  15%{opacity:1}100%{opacity:0;transform:translate(-50%,-260px) scale(1.05)}}
+
+/* ---------- กดรับกำลังใจ / ตู้กด / ก่อนนอน : กล่องข้อความ ---------- */
+.msgbox{margin-top:22px;min-height:80px;max-width:22em;font-family:'Itim',cursive;
+  font-size:19px;line-height:1.7;color:#fbeede;text-shadow:0 0 20px rgba(240,166,192,.25)}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px;max-width:360px}
+.chip{font-family:'Sarabun';font-size:15px;color:var(--text);background:rgba(255,255,255,.06);
+  border:1px solid rgba(240,166,192,.3);border-radius:100px;padding:12px 16px;cursor:pointer;
+  transition:transform .2s,background .2s}
+.chip:hover{transform:translateY(-2px);background:rgba(240,166,192,.16)}
+.chip:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+
+/* ---------- สัตว์เลี้ยง ---------- */
+.pet{font-size:96px;cursor:pointer;user-select:none;margin:18px 0;
+  transition:transform .15s;filter:drop-shadow(0 0 26px rgba(244,213,141,.5))}
+.pet:active{transform:scale(.9)}
+.pet.happy{animation:wiggle .4s}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(-10deg) scale(1.06)}75%{transform:rotate(10deg) scale(1.06)}}
+.petmsg{font-family:'Itim',cursive;color:var(--rose);font-size:17px;min-height:26px;margin-top:6px}
+.petcount{color:var(--muted);font-size:12px;margin-top:2px}
+
+/* หัวใจ/ประกายเด้ง */
+.pop-heart{position:fixed;z-index:9;pointer-events:none;font-size:24px;
+  animation:popup 1s ease-out forwards}
+@keyframes popup{0%{opacity:1;transform:translateY(0) scale(.6)}100%{opacity:0;transform:translateY(-90px) scale(1.2)}}
+
+/* ---------- ก่อนนอน ---------- */
+#sleep{background:rgba(0,0,0,.25)}
+#sleep .moon{width:80px;height:80px;border-radius:50%;margin-bottom:18px;
+  background:radial-gradient(circle at 38% 34%,#fff,#f6e6b0 55%,#e9c877);
+  box-shadow:0 0 40px rgba(246,230,176,.6)}
+
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001s!important;transition-duration:.3s!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<a class="home-link" href="index.html">← หน้าหลัก</a>
+<button class="sound" id="soundBtn" aria-label="เปิด/ปิดเสียง">🔇</button>
+
+<!-- ===== เมนู ===== -->
+<section class="screen on" id="menu">
+  <div class="welcome">เหนื่อยมาทั้งวันแล้วใช่ไหมหนู</div>
+  <h2 class="title">มุมพักใจของหนู ✦</h2>
+  <div class="lead">เลือกมุมที่อยากพักได้เลยนะ พี่ทำไว้ให้หนูหายเหนื่อย 🌙</div>
+  <div class="grid" id="cornerGrid"></div>
+</section>
+
+<!-- ===== หายใจไปด้วยกัน ===== -->
+<section class="screen" id="breathe">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">หายใจไปด้วยกันนะ</h2>
+  <div class="lead">ทำตามวงกลมช้า ๆ… พี่หายใจอยู่ข้าง ๆ หนูนะ</div>
+  <div class="breath-wrap"><div class="breath" id="breathCircle"><span id="breathText">หายใจเข้า…</span></div></div>
+</section>
+
+<!-- ===== ปล่อยความเหนื่อย ===== -->
+<section class="screen" id="release">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">ปล่อยความเหนื่อยลอยไป</h2>
+  <div class="lead">พิมพ์เรื่องที่ทำให้เหนื่อยวันนี้ แล้วกดปล่อยให้มันลอยหายไปกับดาว ✦</div>
+  <textarea id="worry" placeholder="วันนี้เหนื่อยเรื่อง…"></textarea>
+  <button class="btn" id="releaseBtn">ปล่อยให้ลอยไป ✦</button>
+  <div class="msgbox" id="releaseMsg"></div>
+</section>
+
+<!-- ===== กดรับกำลังใจ ===== -->
+<section class="screen" id="cheer">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">กดรับกำลังใจจากพี่</h2>
+  <div class="lead">กดปุ่มเมื่อไหร่ก็ได้ที่อยากได้กำลังใจนะ</div>
+  <div class="msgbox" id="cheerMsg">แตะปุ่มด้านล่างสิ ✦</div>
+  <button class="btn" id="cheerBtn">ขอกำลังใจหน่อย 🤍</button>
+</section>
+
+<!-- ===== ตู้กดเครื่องดื่ม ===== -->
+<section class="screen" id="vending">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">พี่เลี้ยงอะไรดี?</h2>
+  <div class="lead">เลือกสักอย่างให้หายเหนื่อยนะ พี่จัดให้ ✦</div>
+  <div class="chips" id="drinkChips"></div>
+  <div class="msgbox" id="drinkMsg"></div>
+</section>
+
+<!-- ===== สัตว์เลี้ยงไว้ลูบ ===== -->
+<section class="screen" id="pet">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">เจ้าดาวรอหนูอยู่</h2>
+  <div class="lead">แตะเจ้าดาวเบา ๆ สิ มันชอบให้หนูลูบนะ</div>
+  <div class="pet" id="petEl">⭐</div>
+  <div class="petmsg" id="petMsg">แตะเบา ๆ นะ ✦</div>
+  <div class="petcount" id="petCount"></div>
+</section>
+
+<!-- ===== จิ้มฟองให้แตก ===== -->
+<section class="screen" id="bubbles">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <h2 class="title">จิ้มฟองเล่นเพลิน ๆ</h2>
+  <div class="lead">แตะตรงไหนก็ได้บนจอ ฟองจะแตกเป็นดาว บางฟองมีคำหวานซ่อนอยู่นะ ✦</div>
+</section>
+
+<!-- ===== ก่อนนอน ===== -->
+<section class="screen" id="sleep">
+  <button class="back" data-back>← มุมพักใจ</button>
+  <div class="moon"></div>
+  <h2 class="title">โหมดก่อนนอน</h2>
+  <div class="msgbox" id="sleepMsg"></div>
+</section>
+
+<script>
+/* ============================================================================
+   แก้ข้อความได้เลยตรงนี้ (ทั้งหมดเป็นคำจากพี่เบล ปรับเป็นสไตล์ตัวเองได้)
+   ============================================================================ */
+const REST = {
+  cheer: [
+    "เหนื่อยมากเลยใช่ไหมวันนี้ พักก่อนนะ พี่อยู่ตรงนี้เสมอ ✦",
+    "หนูเก่งมากแล้วนะ ที่ผ่านวันนี้มาได้ พี่ภูมิใจในตัวหนูจริง ๆ 🤍",
+    "วางงานลงก่อน แล้วหายใจลึก ๆ นะ เดี๋ยวทุกอย่างก็ค่อย ๆ ดีขึ้น",
+    "ไม่ต้องเก่งตลอดเวลาก็ได้นะ เหนื่อยเมื่อไหร่ก็พิงพี่ได้เสมอ",
+    "วันนี้หนูทำเต็มที่แล้ว ที่เหลือพักได้เลย เดี๋ยวพี่ดูแลเอง 🌙",
+    "ยิ้มให้พี่หน่อยสิ ✦ พี่คิดถึงรอยยิ้มของหนูนะ",
+    "อดทนมาเยอะเลยเนอะ เดี๋ยวมันก็ผ่านไป หนูไม่ได้สู้คนเดียวนะ มีพี่ด้วย"
+  ],
+  release: [
+    "ปล่อยมันลอยไปกับดาวเลยนะ เหลือแค่หนูกับความสบายใจ ✦",
+    "เก่งมากที่กล้าปล่อยมันไป คืนนี้พักผ่อนเยอะ ๆ นะ 🌙",
+    "ความเหนื่อยลอยหายไปแล้ว เหลือไว้แค่พี่ที่คอยห่วงหนูนะ"
+  ],
+  drinks: [
+    { em:"☕", name:"กาแฟอุ่น ๆ", msg:"จิบช้า ๆ นะ พี่ชงใจใส่มาเต็มแก้วเลย ✦" },
+    { em:"🧋", name:"ชาเย็น",    msg:"หวานเย็นชื่นใจ เหมือนตอนได้เจอหนูเลยนะ 🥤" },
+    { em:"🍵", name:"ชาร้อน",    msg:"อุ่น ๆ สบายท้อง พักหายใจสักครู่นะหนู" },
+    { em:"🍰", name:"ขนมหวาน",   msg:"กินขนมแล้วอารมณ์ดีขึ้นเยอะเลยเนอะ เดี๋ยวพี่หาให้อีก 🍰" }
+  ],
+  petMessages: [
+    "เจ้าดาวดีใจที่หนูมาเล่นด้วย ✦",
+    "อุ่น ๆ นุ่ม ๆ เลยเนอะ 🌟",
+    "เจ้าดาวส่องแสงให้หนูหายเหนื่อยนะ",
+    "ลูบอีกสิ ๆ เจ้าดาวชอบ 🥰"
+  ],
+  petSecret: "เจ้าดาวกระซิบว่า… “พี่เบลฝากบอกว่าคิดถึงหนูนะ” ✦",
+  bubbleWords: ["รักนะ","คิดถึง","เก่งมาก","พักด้วยนะ","ยิ้มหน่อย","กอด ๆ","หายเหนื่อยนะ","หนูน่ารัก","สู้ ๆ","♥"],
+  goodnight: "ราตรีสวัสดิ์นะหนู ✦ วันนี้เหนื่อยมาเยอะแล้ว หลับฝันดี พรุ่งนี้ค่อยสู้ใหม่ พี่อยู่ตรงนี้เสมอนะ 🌙"
+};
+
+const CORNERS = [
+  {id:"breathe", em:"🫧", name:"หายใจไปด้วยกัน", desc:"สงบใจ ผ่อนคลาย"},
+  {id:"cheer",   em:"🤍", name:"กดรับกำลังใจ",   desc:"อยากได้กำลังใจ"},
+  {id:"release", em:"🌌", name:"ปล่อยความเหนื่อย", desc:"ปล่อยให้ลอยไป"},
+  {id:"vending", em:"🧋", name:"พี่เลี้ยงอะไรดี", desc:"เลือกของอร่อย"},
+  {id:"pet",     em:"⭐", name:"เจ้าดาวไว้ลูบ",   desc:"แตะเล่นเพลิน ๆ"},
+  {id:"bubbles", em:"✨", name:"จิ้มฟองให้แตก",   desc:"คลายเครียด"},
+  {id:"sleep",   em:"🌙", name:"โหมดก่อนนอน",     desc:"ราตรีสวัสดิ์"}
+];
+
+/* ---------- ท้องฟ้าพื้นหลัง ---------- */
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
+let W,H,DPR,bg=[],t=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
+  cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+  bg=[];const n=Math.round(innerWidth*innerHeight/3000);
+  for(let i=0;i<n;i++)bg.push({x:Math.random()*W,y:Math.random()*H,
+    r:(Math.random()*1.1+.25)*DPR,tw:Math.random()*6.28,sp:Math.random()*.02+.005,d:Math.random()*.5+.5});}
+addEventListener('resize',resize);resize();
+(function loop(){t+=reduce?0:1;ctx.clearRect(0,0,W,H);
+  for(const s of bg){const tw=reduce?.7:(Math.sin(t*s.sp+s.tw)*.4+.6);
+    ctx.fillStyle="rgba(230,235,255,"+(tw*s.d)+")";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();}
+  requestAnimationFrame(loop);})();
+
+/* ---------- ตัวจัดการหน้าจอ ---------- */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(id==='breathe')startBreath();else stopBreath();
+  if(id==='sleep')document.getElementById('sleepMsg').textContent=REST.goodnight;
+  ensureAudio();}
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('menu'));
+
+/* เมนู */
+const grid=document.getElementById('cornerGrid');
+CORNERS.forEach(c=>{const b=document.createElement('button');b.className='corner';
+  b.innerHTML='<span class="em">'+c.em+'</span><span class="cn">'+c.name+'</span><span class="cd">'+c.desc+'</span>';
+  b.onclick=()=>show(c.id);grid.appendChild(b);});
+
+/* ---------- หายใจ ---------- */
+let breathTimer=null;
+function startBreath(){const c=document.getElementById('breathCircle'),tx=document.getElementById('breathText');
+  let inhale=false;function step(){inhale=!inhale;c.classList.toggle('inhale',inhale);
+    tx.textContent=inhale?'หายใจเข้า…':'ผ่อนออก…';}
+  step();clearInterval(breathTimer);breathTimer=setInterval(step,4000);}
+function stopBreath(){clearInterval(breathTimer);breathTimer=null;}
+
+/* ---------- ปล่อยความเหนื่อย ---------- */
+document.getElementById('releaseBtn').onclick=function(){
+  const ta=document.getElementById('worry'),v=ta.value.trim()||'เหนื่อย…';
+  const fw=document.createElement('div');fw.className='floatword';fw.textContent=v;
+  document.body.appendChild(fw);setTimeout(()=>fw.remove(),3600);
+  ta.value='';
+  document.getElementById('releaseMsg').textContent=pick(REST.release);
+};
+
+/* ---------- กดรับกำลังใจ ---------- */
+document.getElementById('cheerBtn').onclick=function(){
+  document.getElementById('cheerMsg').textContent=pick(REST.cheer);
+  burst(innerWidth/2, innerHeight*0.4, '🤍');
+};
+
+/* ---------- ตู้กดเครื่องดื่ม ---------- */
+const dc=document.getElementById('drinkChips');
+REST.drinks.forEach(d=>{const b=document.createElement('button');b.className='chip';
+  b.textContent=d.em+' '+d.name;
+  b.onclick=()=>{document.getElementById('drinkMsg').textContent=d.msg;burst(innerWidth/2,innerHeight*0.4,d.em);};
+  dc.appendChild(b);});
+
+/* ---------- สัตว์เลี้ยง ---------- */
+let pats=0;
+document.getElementById('petEl').onclick=function(e){
+  pats++;this.classList.remove('happy');void this.offsetWidth;this.classList.add('happy');
+  burst(e.clientX,e.clientY,'❤️');
+  document.getElementById('petCount').textContent='ลูบไปแล้ว '+pats+' ที';
+  const msg=document.getElementById('petMsg');
+  if(pats%7===0)msg.textContent=REST.petSecret;
+  else msg.textContent=pick(REST.petMessages);
+};
+
+/* ---------- จิ้มฟอง ---------- */
+document.getElementById('bubbles').addEventListener('pointerdown',function(e){
+  if(e.target.closest('.back'))return;
+  const showWord=Math.random()<.35;
+  burst(e.clientX,e.clientY, showWord?('✨ '+pick(REST.bubbleWords)) : '✨');
+  blip();
+});
+
+/* ---------- เอฟเฟกต์เด้ง ---------- */
+function burst(x,y,txt){const el=document.createElement('div');el.className='pop-heart';
+  el.textContent=txt;el.style.left=(x-12)+'px';el.style.top=(y-12)+'px';
+  document.body.appendChild(el);setTimeout(()=>el.remove(),1000);}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+
+/* ---------- เสียง (ดนตรีบรรเลงนุ่ม ๆ + เสียงจิ้ม) ---------- */
+let audioCtx,master,padOn=false,padTimer,started=false;
+function ensureAudio(){/* เตรียม context ตอนมี interaction แรก */ if(!audioCtx)initAudio();}
+function initAudio(){
+  try{
+    audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    master=audioCtx.createGain();master.gain.value=0;
+    const soft=audioCtx.createBiquadFilter();soft.type='lowpass';soft.frequency.value=2600;
+    soft.connect(audioCtx.destination);master.connect(soft);
+    const delay=audioCtx.createDelay();delay.delayTime.value=.3;
+    const fb=audioCtx.createGain();fb.gain.value=.3;const dlp=audioCtx.createBiquadFilter();
+    dlp.type='lowpass';dlp.frequency.value=1800;const wet=audioCtx.createGain();wet.gain.value=.28;
+    delay.connect(dlp);dlp.connect(fb);fb.connect(delay);delay.connect(wet);wet.connect(master);
+    window._delay=delay;
+    const CH=[[261.63,329.63,392.00,493.88],[220.00,261.63,329.63,392.00],
+              [174.61,220.00,261.63,329.63],[196.00,246.94,293.66,349.23]];
+    const ROOT=[130.81,110.00,87.31,98.00];let ci=0,ni=0;
+    padTimer=setInterval(()=>{if(!padOn||audioCtx.state!=='running')return;
+      if(ni===0){const nT=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+        o.type='sine';o.frequency.value=ROOT[ci];o.connect(g);g.connect(master);
+        g.gain.setValueAtTime(0,nT);g.gain.linearRampToValueAtTime(.05,nT+.5);
+        g.gain.linearRampToValueAtTime(.0001,nT+2.7);o.start(nT);o.stop(nT+2.8);}
+      note(CH[ci][ni],1.7,.085);
+      ni++;if(ni>=4){ni=0;ci=(ci+1)%4;}},600);
+  }catch(e){}
+}
+function note(freq,dur,vol){if(!audioCtx)return;const nT=audioCtx.currentTime;
+  [[1,vol],[2,vol*.3],[3,vol*.1]].forEach(([m,v])=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();
+    o.type='sine';o.frequency.value=freq*m;o.connect(g);g.connect(master);if(window._delay)g.connect(window._delay);
+    g.gain.setValueAtTime(0,nT);g.gain.linearRampToValueAtTime(v,nT+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,nT+dur);o.start(nT);o.stop(nT+dur+.05);});}
+function blip(){if(!audioCtx||!padOn)return;const nT=audioCtx.currentTime,o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type='sine';o.frequency.value=800+Math.random()*500;o.connect(g);g.connect(master);
+  g.gain.setValueAtTime(0,nT);g.gain.linearRampToValueAtTime(.06,nT+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,nT+.5);o.start(nT);o.stop(nT+.55);}
+document.getElementById('soundBtn').onclick=function(){
+  if(!audioCtx)initAudio();
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  padOn=!padOn;
+  if(master)master.gain.linearRampToValueAtTime(padOn?.5:0,audioCtx.currentTime+.5);
+  this.textContent=padOn?'🔊':'🔇';
+};
+</script>
+</body>
+</html>
