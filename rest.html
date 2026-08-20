@@ -69,7 +69,7 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(22px,5.
 .breath-wrap{margin:30px 0 10px;display:flex;align-items:center;justify-content:center;height:230px}
 .breath{width:130px;height:130px;border-radius:50%;
   background:radial-gradient(circle at 40% 35%,rgba(244,213,141,.5),rgba(240,166,192,.28));
-  box-shadow:0 0 50px rgba(240,166,192,.35);transition:transform 4s ease-in-out;
+  box-shadow:0 0 50px rgba(240,166,192,.35);transition:transform 5s ease-in-out;
   display:flex;align-items:center;justify-content:center}
 .breath.inhale{transform:scale(1.7)}
 .breath span{font-family:'Itim',cursive;font-size:16px;color:#fff}
@@ -108,12 +108,39 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(22px,5.
 .pop-heart{position:fixed;z-index:9;pointer-events:none;font-size:24px;
   animation:popup 1s ease-out forwards}
 @keyframes popup{0%{opacity:1;transform:translateY(0) scale(.6)}100%{opacity:0;transform:translateY(-90px) scale(1.2)}}
+/* ฟองสบู่ */
+.bubble{position:fixed;z-index:6;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.6),rgba(240,166,192,.26) 58%,rgba(240,166,192,.05));
+  border:1px solid rgba(255,255,255,.4);box-shadow:0 0 16px rgba(240,166,192,.35),inset 0 0 12px rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Itim',cursive;font-size:13px;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.55)}
+@keyframes rise{0%{transform:translateY(0) scale(.5);opacity:0}
+  12%{opacity:1}85%{opacity:1}100%{transform:translateY(-72vh) scale(1);opacity:0}}
+.bubble.pop{animation:bpop .35s ease-out forwards!important}
+@keyframes bpop{to{transform:scale(1.7);opacity:0}}
 
 /* ---------- ก่อนนอน ---------- */
 #sleep{background:rgba(0,0,0,.25)}
-#sleep .moon{width:80px;height:80px;border-radius:50%;margin-bottom:18px;
+#sleep .moon{width:80px;height:80px;border-radius:50%;margin-bottom:18px;cursor:pointer;
   background:radial-gradient(circle at 38% 34%,#fff,#f6e6b0 55%,#e9c877);
-  box-shadow:0 0 40px rgba(246,230,176,.6)}
+  box-shadow:0 0 40px rgba(246,230,176,.6);transition:transform .3s}
+#sleep .moon:hover{transform:scale(1.06)}
+.wish{display:flex;gap:8px;margin-top:18px;width:100%;max-width:360px;justify-content:center}
+.wish input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+  border-radius:100px;color:var(--text);padding:11px 16px;font-family:'Sarabun',sans-serif;
+  font-size:14px;outline:none}
+.wish input:focus{border-color:rgba(240,166,192,.5)}
+.dim{position:fixed;inset:0;z-index:30;background:rgba(2,3,10,.97);display:flex;
+  align-items:center;justify-content:center;text-align:center;color:var(--muted);
+  font-family:'Itim',cursive;font-size:22px;line-height:2;opacity:0;pointer-events:none;
+  transition:opacity 1.4s ease}
+.dim.on{opacity:1;pointer-events:auto;cursor:pointer}
+.dim small{font-size:12px;color:#5a5d7a}
+.wishstar{position:fixed;left:24%;bottom:22%;width:9px;height:9px;border-radius:50%;z-index:12;
+  background:#fff;box-shadow:0 0 12px #fff,0 0 26px var(--star-gold);pointer-events:none;
+  animation:wishfly 1.7s ease-in forwards}
+@keyframes wishfly{0%{opacity:0;transform:translate(0,0) scale(.5)}
+  15%{opacity:1}100%{opacity:0;transform:translate(55vw,-72vh) scale(1.1)}}
 
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001s!important;transition-duration:.3s!important}}
 </style>
@@ -158,15 +185,6 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(22px,5.
   <button class="btn" id="cheerBtn">ขอกำลังใจหน่อย 🤍</button>
 </section>
 
-<!-- ===== ตู้กดเครื่องดื่ม ===== -->
-<section class="screen" id="vending">
-  <button class="back" data-back>← มุมพักใจ</button>
-  <h2 class="title">พี่เลี้ยงอะไรดี?</h2>
-  <div class="lead">เลือกสักอย่างให้หายเหนื่อยนะ พี่จัดให้ ✦</div>
-  <div class="chips" id="drinkChips"></div>
-  <div class="msgbox" id="drinkMsg"></div>
-</section>
-
 <!-- ===== สัตว์เลี้ยงไว้ลูบ ===== -->
 <section class="screen" id="pet">
   <button class="back" data-back>← มุมพักใจ</button>
@@ -187,10 +205,16 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(22px,5.
 <!-- ===== ก่อนนอน ===== -->
 <section class="screen" id="sleep">
   <button class="back" data-back>← มุมพักใจ</button>
-  <div class="moon"></div>
+  <div class="moon" id="sleepMoon" title="แตะเพื่อเปลี่ยนคำ"></div>
   <h2 class="title">โหมดก่อนนอน</h2>
   <div class="msgbox" id="sleepMsg"></div>
+  <div class="wish">
+    <input id="wishInput" placeholder="ขอพรก่อนนอน…" autocomplete="off">
+    <button class="chip" id="wishBtn">ส่งขึ้นฟ้า ✦</button>
+  </div>
+  <button class="btn" id="dimBtn">หรี่ไฟ ฝันดี 🌙</button>
 </section>
+<div class="dim" id="dim"><span>ฝันดีนะหนู 🌙<br><small>แตะเพื่อกลับมา</small></span></div>
 
 <script>
 /* ============================================================================
@@ -204,18 +228,41 @@ const REST = {
     "ไม่ต้องเก่งตลอดเวลาก็ได้นะ เหนื่อยเมื่อไหร่ก็พิงพี่ได้เสมอ",
     "วันนี้หนูทำเต็มที่แล้ว ที่เหลือพักได้เลย เดี๋ยวพี่ดูแลเอง 🌙",
     "ยิ้มให้พี่หน่อยสิ ✦ พี่คิดถึงรอยยิ้มของหนูนะ",
-    "อดทนมาเยอะเลยเนอะ เดี๋ยวมันก็ผ่านไป หนูไม่ได้สู้คนเดียวนะ มีพี่ด้วย"
+    "อดทนมาเยอะเลยเนอะ เดี๋ยวมันก็ผ่านไป หนูไม่ได้สู้คนเดียวนะ มีพี่ด้วย",
+    "เหนื่อยได้นะ ร้องได้นะ แต่อย่าลืมว่ามีพี่คอยเป็นที่พักให้เสมอ",
+    "หนูมีค่ามากกว่างานที่ทำเยอะเลยนะ อย่าลืมดูแลตัวเองด้วย 🤍",
+    "วันแย่ ๆ ไม่ได้อยู่กับเราตลอดไปหรอก เดี๋ยวก็มีเรื่องดี ๆ รออยู่",
+    "พักได้แล้วนะ หนูทำหน้าที่ของวันนี้ครบแล้ว พี่ขอบคุณที่หนูพยายามนะ",
+    "กอดไกล ๆ ให้หนึ่งทีนะ 🫂 หายเหนื่อยเยอะ ๆ เลย",
+    "ถ้าวันนี้มันหนัก ก็แค่บอกพี่นะ พี่พร้อมรับฟังหนูเสมอ",
+    "เก่งจนพี่แอบภูมิใจเลยเนี่ย ✦ พักเยอะ ๆ นะคนเก่ง",
+    "หนูไม่ต้องสมบูรณ์แบบเพื่อให้พี่ชอบหรอกนะ พี่ชอบหนูแบบที่หนูเป็น",
+    "ดื่มน้ำ ยืดเส้นสักหน่อย แล้วยิ้มให้ตัวเองนะ หนูดูแลทุกอย่างมาทั้งวันแล้ว",
+    "เหนื่อยแค่ไหนก็อย่าลืมกินข้าวนะ เดี๋ยวพี่ห่วง 🍚",
+    "ขอบคุณที่ยังสู้อยู่นะวันนี้ หนูเก่งกว่าที่หนูคิดเยอะเลย",
+    "หลับตาสักครู่ หายใจช้า ๆ แล้วบอกตัวเองว่า ‘วันนี้พอแล้ว’ นะ ✦",
+    "พี่ส่งพลังบวกไปให้เต็ม ๆ เลย รับไปนะ 🌟 พรุ่งนี้ค่อยว่ากันใหม่",
+    "ไม่ว่าวันนี้จะเป็นยังไง พี่ก็ยังอยู่ข้างหนูเหมือนเดิมนะ",
+    "เหนื่อยก็พักก่อน ไม่ใช่ยอมแพ้นะ หนูแค่กำลังชาร์จพลังอยู่ ✦",
+    "อย่าเพิ่งกดดันตัวเองมากไปนะ หนูทำได้ดีมากแล้วจริง ๆ",
+    "คืนนี้ขอให้หนูได้พักเต็มที่ พี่จะคอยส่องแสงเป็นเพื่อนหนูเอง 🌙"
   ],
   release: [
     "ปล่อยมันลอยไปกับดาวเลยนะ เหลือแค่หนูกับความสบายใจ ✦",
     "เก่งมากที่กล้าปล่อยมันไป คืนนี้พักผ่อนเยอะ ๆ นะ 🌙",
-    "ความเหนื่อยลอยหายไปแล้ว เหลือไว้แค่พี่ที่คอยห่วงหนูนะ"
-  ],
-  drinks: [
-    { em:"☕", name:"กาแฟอุ่น ๆ", msg:"จิบช้า ๆ นะ พี่ชงใจใส่มาเต็มแก้วเลย ✦" },
-    { em:"🧋", name:"ชาเย็น",    msg:"หวานเย็นชื่นใจ เหมือนตอนได้เจอหนูเลยนะ 🥤" },
-    { em:"🍵", name:"ชาร้อน",    msg:"อุ่น ๆ สบายท้อง พักหายใจสักครู่นะหนู" },
-    { em:"🍰", name:"ขนมหวาน",   msg:"กินขนมแล้วอารมณ์ดีขึ้นเยอะเลยเนอะ เดี๋ยวพี่หาให้อีก 🍰" }
+    "ความเหนื่อยลอยหายไปแล้ว เหลือไว้แค่พี่ที่คอยห่วงหนูนะ",
+    "ปล่อยไปแล้วก็อย่าเก็บกลับมาคิดอีกนะ วันนี้พอแค่นี้พอ ✦",
+    "เบาขึ้นไหมหนู เรื่องหนัก ๆ ไม่ต้องแบกคนเดียวนะ แบ่งมาให้พี่ได้เสมอ",
+    "หายใจเข้าลึก ๆ… แล้วปล่อยความเหนื่อยออกไปพร้อมลมหายใจนะ 🌬️",
+    "สิ่งที่ผ่านไปแล้วก็ให้มันผ่านไป พรุ่งนี้เราค่อยเริ่มใหม่ด้วยกันนะ",
+    "หนูทำดีที่สุดแล้ววันนี้ ที่เหลือปล่อยให้ดาวช่วยดูแลนะ ✦",
+    "เก่งจังเลยที่ยังยิ้มได้ ปล่อยเรื่องหนัก ๆ ทิ้งไป แล้วพักให้เต็มที่นะ",
+    "ความเหนื่อยเป็นแค่เมฆที่ลอยผ่าน เดี๋ยวฟ้าก็กลับมาใสเองนะ 🌙",
+    "โยนความกังวลให้ดาวเก็บไว้ก่อน คืนนี้ขอให้หนูหลับสบาย ๆ นะ",
+    "พี่ภูมิใจในตัวหนูมากนะ ที่อดทนมาถึงตรงนี้ พักได้แล้ว ✦",
+    "ปล่อยวางบ้างก็ได้นะ หนูไม่จำเป็นต้องแข็งแรงตลอดเวลาหรอก",
+    "เรื่องเหนื่อย ๆ ลอยไปแล้ว เหลือไว้แค่ความรู้สึกว่ามีคนคอยอยู่ข้าง ๆ หนูนะ",
+    "ขอบคุณที่สู้มาทั้งวันนะ ตอนนี้ถึงเวลาพักของหนูแล้ว 🤍"
   ],
   petMessages: [
     "เจ้าดาวดีใจที่หนูมาเล่นด้วย ✦",
@@ -225,14 +272,25 @@ const REST = {
   ],
   petSecret: "เจ้าดาวกระซิบว่า… “พี่เบลฝากบอกว่าคิดถึงหนูนะ” ✦",
   bubbleWords: ["รักนะ","คิดถึง","เก่งมาก","พักด้วยนะ","ยิ้มหน่อย","กอด ๆ","หายเหนื่อยนะ","หนูน่ารัก","สู้ ๆ","♥"],
-  goodnight: "ราตรีสวัสดิ์นะหนู ✦ วันนี้เหนื่อยมาเยอะแล้ว หลับฝันดี พรุ่งนี้ค่อยสู้ใหม่ พี่อยู่ตรงนี้เสมอนะ 🌙"
+  goodnights: [
+    "ราตรีสวัสดิ์นะหนู ✦ วันนี้เหนื่อยมาเยอะแล้ว หลับฝันดี พรุ่งนี้ค่อยสู้ใหม่ พี่อยู่ตรงนี้เสมอนะ 🌙",
+    "หลับตาลงช้า ๆ นะ ปล่อยความเหนื่อยไว้ที่วันนี้ พรุ่งนี้เป็นวันใหม่ที่ดีกว่าเดิม ✦",
+    "ขอให้คืนนี้หนูหลับสบาย ฝันถึงเรื่องดี ๆ นะ พี่ส่งดาวมาเฝ้าหนูให้หลับสนิทเลย 🌙",
+    "งานพักไว้ก่อนนะ ตอนนี้เป็นเวลาของหนูกับความสงบ ฝันดีนะคนเก่ง ✦",
+    "หลับให้เต็มอิ่มนะ เดี๋ยวพรุ่งนี้พี่จะคอยเป็นกำลังใจให้เหมือนเดิม ราตรีสวัสดิ์ 🤍",
+    "หายใจเข้าลึก ๆ แล้วหลับตานะ คืนนี้ไม่มีอะไรต้องกังวลแล้ว พี่ดูแลเอง 🌙"
+  ],
+  wishReplies: [
+    "ส่งคำขอของหนูขึ้นฟ้าให้แล้วนะ ✦ ขอให้เป็นจริง หลับฝันดีนะ 🌙",
+    "พี่ขอพรเดียวกับหนูด้วยเลย ✦ ฝันดีนะคนดี",
+    "ดาวรับคำขอไปแล้ว คืนนี้หลับสบาย ๆ เลยนะหนู 🌙"
+  ]
 };
 
 const CORNERS = [
   {id:"breathe", em:"🫧", name:"หายใจไปด้วยกัน", desc:"สงบใจ ผ่อนคลาย"},
   {id:"cheer",   em:"🤍", name:"กดรับกำลังใจ",   desc:"อยากได้กำลังใจ"},
   {id:"release", em:"🌌", name:"ปล่อยความเหนื่อย", desc:"ปล่อยให้ลอยไป"},
-  {id:"vending", em:"🧋", name:"พี่เลี้ยงอะไรดี", desc:"เลือกของอร่อย"},
   {id:"pet",     em:"⭐", name:"เจ้าดาวไว้ลูบ",   desc:"แตะเล่นเพลิน ๆ"},
   {id:"bubbles", em:"✨", name:"จิ้มฟองให้แตก",   desc:"คลายเครียด"},
   {id:"sleep",   em:"🌙", name:"โหมดก่อนนอน",     desc:"ราตรีสวัสดิ์"}
@@ -256,7 +314,8 @@ addEventListener('resize',resize);resize();
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
   if(id==='breathe')startBreath();else stopBreath();
-  if(id==='sleep')document.getElementById('sleepMsg').textContent=REST.goodnight;
+  if(id==='bubbles')startBubbles();else stopBubbles();
+  if(id==='sleep'){document.getElementById('sleepMsg').textContent=nextGoodnight();autoLullaby();}
   ensureAudio();}
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('menu'));
 
@@ -266,35 +325,43 @@ CORNERS.forEach(c=>{const b=document.createElement('button');b.className='corner
   b.innerHTML='<span class="em">'+c.em+'</span><span class="cn">'+c.name+'</span><span class="cd">'+c.desc+'</span>';
   b.onclick=()=>show(c.id);grid.appendChild(b);});
 
-/* ---------- หายใจ ---------- */
+/* ---------- หายใจ (จังหวะช้า สงบ) ---------- */
 let breathTimer=null;
-function startBreath(){const c=document.getElementById('breathCircle'),tx=document.getElementById('breathText');
-  let inhale=false;function step(){inhale=!inhale;c.classList.toggle('inhale',inhale);
-    tx.textContent=inhale?'หายใจเข้า…':'ผ่อนออก…';}
-  step();clearInterval(breathTimer);breathTimer=setInterval(step,4000);}
-function stopBreath(){clearInterval(breathTimer);breathTimer=null;}
+function startBreath(){
+  stopBreath();
+  const c=document.getElementById('breathCircle'),tx=document.getElementById('breathText');
+  const seq=[
+    {act:()=>{c.style.transitionDuration='5s';c.classList.add('inhale');tx.textContent='หายใจเข้า…';}, dur:5000},
+    {act:()=>{tx.textContent='กลั้นไว้…';}, dur:1600},
+    {act:()=>{c.style.transitionDuration='5s';c.classList.remove('inhale');tx.textContent='ผ่อนออก…';}, dur:5000},
+    {act:()=>{tx.textContent='พักสักครู่…';}, dur:1400}
+  ];
+  let i=0;
+  (function run(){const p=seq[i];p.act();
+    breathTimer=setTimeout(()=>{i=(i+1)%seq.length;run();},p.dur);})();
+}
+function stopBreath(){if(breathTimer)clearTimeout(breathTimer);breathTimer=null;}
 
 /* ---------- ปล่อยความเหนื่อย ---------- */
+let lastRelease='';
 document.getElementById('releaseBtn').onclick=function(){
   const ta=document.getElementById('worry'),v=ta.value.trim()||'เหนื่อย…';
   const fw=document.createElement('div');fw.className='floatword';fw.textContent=v;
   document.body.appendChild(fw);setTimeout(()=>fw.remove(),3600);
   ta.value='';
-  document.getElementById('releaseMsg').textContent=pick(REST.release);
+  let m;do{m=pick(REST.release);}while(REST.release.length>1 && m===lastRelease);
+  lastRelease=m;
+  document.getElementById('releaseMsg').textContent=m;
 };
 
 /* ---------- กดรับกำลังใจ ---------- */
+let lastCheer='';
 document.getElementById('cheerBtn').onclick=function(){
-  document.getElementById('cheerMsg').textContent=pick(REST.cheer);
+  let m;do{m=pick(REST.cheer);}while(REST.cheer.length>1 && m===lastCheer);
+  lastCheer=m;
+  document.getElementById('cheerMsg').textContent=m;
   burst(innerWidth/2, innerHeight*0.4, '🤍');
 };
-
-/* ---------- ตู้กดเครื่องดื่ม ---------- */
-const dc=document.getElementById('drinkChips');
-REST.drinks.forEach(d=>{const b=document.createElement('button');b.className='chip';
-  b.textContent=d.em+' '+d.name;
-  b.onclick=()=>{document.getElementById('drinkMsg').textContent=d.msg;burst(innerWidth/2,innerHeight*0.4,d.em);};
-  dc.appendChild(b);});
 
 /* ---------- สัตว์เลี้ยง ---------- */
 let pats=0;
@@ -308,12 +375,60 @@ document.getElementById('petEl').onclick=function(e){
 };
 
 /* ---------- จิ้มฟอง ---------- */
+let bubbleTimer=null;
+function startBubbles(){stopBubbles();spawnBubble();spawnBubble();
+  bubbleTimer=setInterval(spawnBubble,650);}
+function stopBubbles(){if(bubbleTimer)clearInterval(bubbleTimer);bubbleTimer=null;
+  document.querySelectorAll('.bubble').forEach(b=>b.remove());}
+function spawnBubble(){
+  const scr=document.getElementById('bubbles');if(!scr.classList.contains('on'))return;
+  const b=document.createElement('div');b.className='bubble';
+  const size=38+Math.random()*46;
+  b.style.width=size+'px';b.style.height=size+'px';
+  b.style.left=(Math.random()*(innerWidth-size-20)+10)+'px';
+  b.style.top=(innerHeight-30)+'px';
+  b.style.animation='rise '+(4.6+Math.random()*2.6)+'s linear forwards';
+  const word=Math.random()<.4?pick(REST.bubbleWords):'';
+  if(word)b.textContent=word;
+  b.addEventListener('pointerdown',function(ev){ev.stopPropagation();
+    const r=b.getBoundingClientRect();popBubble(b,word,r.left+r.width/2,r.top+r.height/2);});
+  b.addEventListener('animationend',()=>b.remove());
+  scr.appendChild(b);
+}
+function popBubble(b,word,x,y){b.classList.add('pop');setTimeout(()=>b.remove(),340);
+  burst(x,y,word?('✨ '+word):'✨');blip();}
+// แตะพื้นที่ว่าง = เกิดฟองใหม่ตรงนั้นให้แตกเล่น
 document.getElementById('bubbles').addEventListener('pointerdown',function(e){
   if(e.target.closest('.back'))return;
-  const showWord=Math.random()<.35;
-  burst(e.clientX,e.clientY, showWord?('✨ '+pick(REST.bubbleWords)) : '✨');
-  blip();
+  const word=Math.random()<.4?pick(REST.bubbleWords):'';
+  burst(e.clientX,e.clientY,word?('✨ '+word):'✨');blip();
 });
+
+/* ---------- โหมดก่อนนอน ---------- */
+let gnIndex=Math.floor(Math.random()*REST.goodnights.length);
+function nextGoodnight(){const m=REST.goodnights[gnIndex%REST.goodnights.length];gnIndex++;return m;}
+document.getElementById('sleepMoon').onclick=function(){
+  document.getElementById('sleepMsg').textContent=nextGoodnight();};
+// ขอพรก่อนนอน → ดาวตกพาคำขอขึ้นฟ้า
+function launchWish(){
+  const s=document.createElement('div');s.className='wishstar';
+  document.body.appendChild(s);setTimeout(()=>s.remove(),1800);
+  document.getElementById('sleepMsg').textContent=pick(REST.wishReplies);
+  document.getElementById('wishInput').value='';blip();
+}
+document.getElementById('wishBtn').onclick=launchWish;
+document.getElementById('wishInput').addEventListener('keydown',function(e){if(e.key==='Enter')launchWish();});
+// หรี่ไฟ ฝันดี
+const dim=document.getElementById('dim');
+document.getElementById('dimBtn').onclick=()=>dim.classList.add('on');
+dim.onclick=()=>dim.classList.remove('on');
+// เพลงกล่อมเบา ๆ เปิดเองตอนเข้าโหมดก่อนนอน
+function autoLullaby(){
+  if(!audioCtx)initAudio();
+  if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
+  if(!padOn){padOn=true;document.getElementById('soundBtn').textContent='🔊';}
+  if(master)master.gain.linearRampToValueAtTime(.4,audioCtx.currentTime+1.2);
+}
 
 /* ---------- เอฟเฟกต์เด้ง ---------- */
 function burst(x,y,txt){const el=document.createElement('div');el.className='pop-heart';
