@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>เสี่ยงทายกับดาว ✦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@300;400;600&family=Itim&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night-0:#070b1e;--night-1:#0d1330;--night-2:#1a1b42;--nebula:#2a1f4d;
+  --star-gold:#f4d58d;--rose:#f0a6c0;--purple:#b39ddb;--text:#efe9ff;--muted:#9296c0;--glass:rgba(20,24,58,.55);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Sarabun',system-ui,sans-serif;color:var(--text);position:fixed;inset:0;
+  background:
+    radial-gradient(120% 90% at 50% -10%, var(--nebula) 0%, rgba(42,31,77,0) 55%),
+    radial-gradient(150% 120% at 80% 115%, #2a1a4d 0%, rgba(36,26,68,0) 55%),
+    linear-gradient(180deg, var(--night-1) 0%, var(--night-0) 60%, #05060f 100%);}
+canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+.home-link{position:fixed;top:14px;left:14px;z-index:20;padding:8px 14px;border-radius:100px;
+  background:var(--glass);border:1px solid rgba(240,166,192,.25);color:var(--text);
+  backdrop-filter:blur(8px);font-family:'Sarabun',sans-serif;font-size:13px;text-decoration:none}
+.home-link:hover{background:rgba(240,166,192,.18)}
+.home-link:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+
+.screen{position:fixed;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;
+  justify-content:center;padding:64px 24px 34px;text-align:center;overflow-y:auto}
+.screen.on{display:flex;animation:fade .5s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.back{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:20;color:var(--muted);
+  background:none;border:none;font-family:'Sarabun';font-size:13.5px;cursor:pointer}
+.back:hover{color:var(--text)}
+h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.4vw,28px);
+  text-shadow:0 0 24px rgba(179,157,219,.35)}
+.lead{color:var(--muted);font-size:14px;margin-top:6px;max-width:22em}
+
+#menu .welcome{font-family:'Itim',cursive;color:var(--purple);font-size:17px;margin-bottom:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;width:100%;max-width:420px}
+.corner{background:linear-gradient(160deg,rgba(38,28,66,.72),rgba(16,18,46,.72));
+  border:1px solid rgba(179,157,219,.28);border-radius:18px;padding:18px 12px;cursor:pointer;
+  color:var(--text);display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:transform .25s,border-color .25s,box-shadow .25s}
+.corner:hover{transform:translateY(-3px);border-color:rgba(179,157,219,.6);
+  box-shadow:0 12px 30px rgba(0,0,0,.35),0 0 20px rgba(179,157,219,.15)}
+.corner:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.corner .em{font-size:30px}
+.corner .cn{font-family:'Prompt',sans-serif;font-size:14px;font-weight:500}
+.corner .cd{font-size:11px;color:var(--muted);line-height:1.4}
+
+.btn{font-family:'Sarabun',sans-serif;font-size:16px;color:var(--night-0);
+  background:linear-gradient(135deg,#e6c8f5,#f0a6c0);border:none;border-radius:100px;
+  padding:13px 28px;cursor:pointer;margin-top:22px;box-shadow:0 8px 30px rgba(179,157,219,.3);
+  transition:transform .3s}
+.btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
+.btn:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+.msgbox{margin-top:20px;min-height:60px;max-width:22em;font-family:'Itim',cursive;font-size:18px;
+  line-height:1.7;color:#f2ecfb}
+
+/* ---------- ไพ่ดาว ---------- */
+.card3d{width:180px;height:270px;margin:24px auto 4px;perspective:1000px;cursor:pointer}
+.card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;
+  transition:transform .8s cubic-bezier(.4,.2,.2,1)}
+.card3d.flipped .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;border-radius:18px;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center}
+.face.back{background:radial-gradient(circle at 50% 35%,#3a2f66,#171a3d);
+  border:1px solid rgba(244,213,141,.4);box-shadow:0 12px 34px rgba(0,0,0,.45)}
+.face.back .b-star{font-size:44px;filter:drop-shadow(0 0 14px var(--star-gold))}
+.face.back small{color:var(--muted);margin-top:10px;font-size:12px}
+.face.front{transform:rotateY(180deg);background:linear-gradient(180deg,#2a2350,#14142f);
+  border:1px solid rgba(179,157,219,.5);box-shadow:0 12px 34px rgba(0,0,0,.45)}
+.face.front .f-ico{font-size:46px}
+.face.front .f-name{font-family:'Prompt',sans-serif;font-weight:600;font-size:17px;color:var(--star-gold);margin:6px 0}
+.face.front .f-mean{font-size:12.5px;color:var(--muted);margin-bottom:8px}
+.face.front .f-msg{font-family:'Itim',cursive;font-size:15px;color:#f2ecfb;line-height:1.6}
+
+/* ---------- ดูดวงวันนี้ ---------- */
+.fortune{width:100%;max-width:360px;margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.frow{background:rgba(255,255,255,.05);border:1px solid rgba(179,157,219,.22);border-radius:16px;
+  padding:14px 16px;text-align:left}
+.frow .flabel{font-family:'Prompt',sans-serif;font-size:12.5px;color:var(--purple);margin-bottom:4px}
+.frow .fval{font-size:14.5px;line-height:1.6;color:#f2ecfb}
+.frow.inline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.swatch{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:middle;
+  margin-right:8px;border:2px solid rgba(255,255,255,.4)}
+.luckynum{font-family:'Prompt',sans-serif;font-weight:600;font-size:24px;color:var(--star-gold)}
+
+/* ---------- ขอพร ---------- */
+#manifest input{width:100%;max-width:360px;margin-top:18px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(179,157,219,.3);border-radius:100px;color:var(--text);padding:13px 18px;
+  font-family:'Sarabun',sans-serif;font-size:15px;text-align:center;outline:none}
+#manifest input:focus{border-color:rgba(179,157,219,.6)}
+.wishstar{position:fixed;left:26%;bottom:24%;width:9px;height:9px;border-radius:50%;z-index:12;
+  background:#fff;box-shadow:0 0 12px #fff,0 0 26px var(--star-gold);pointer-events:none;
+  animation:wishfly 1.7s ease-in forwards}
+@keyframes wishfly{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:1}
+  100%{opacity:0;transform:translate(50vw,-72vh) scale(1.1)}}
+
+/* ---------- ราศี ---------- */
+.zodiac{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px}
+.zi{display:flex;flex-direction:column;align-items:center;gap:4px}
+.zi .zsym{font-size:40px}
+.zi .zname{font-family:'Prompt',sans-serif;font-size:13px}
+.zi .zwho{font-size:11px;color:var(--muted)}
+.zheart{font-size:26px;animation:beat 1.4s ease-in-out infinite}
+@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.zpct{font-family:'Prompt',sans-serif;font-weight:600;font-size:34px;color:var(--star-gold);margin-top:16px;
+  text-shadow:0 0 22px rgba(244,213,141,.35)}
+@media (prefers-reduced-motion: reduce){*{animation-duration:.001s!important;transition-duration:.3s!important}}
+</style>
+</head>
+<body>
+<canvas id="sky"></canvas>
+<a class="home-link" href="index.html">← หน้าหลัก</a>
+
+<!-- เมนู -->
+<section class="screen on" id="menu">
+  <div class="welcome">เอาใจสายมูของพี่หน่อย</div>
+  <h2 class="title">เสี่ยงทายกับดาว ✦</h2>
+  <div class="lead">เปิดไพ่ ดูดวง ขอพร ให้จักรวาลนำโชคมาให้หนูนะ 🔮</div>
+  <div class="grid" id="cornerGrid"></div>
+</section>
+
+<!-- ไพ่ดาว -->
+<section class="screen" id="cards">
+  <button class="back" data-back>← เสี่ยงทายกับดาว</button>
+  <h2 class="title">เปิดไพ่ดาวประจำวัน</h2>
+  <div class="lead">ตั้งจิตอธิษฐานถึงสิ่งที่อยากรู้ แล้วแตะไพ่เพื่อเปิดนะ ✦</div>
+  <div class="card3d" id="card3d">
+    <div class="card-inner">
+      <div class="face back"><div class="b-star">✦</div><small>แตะเพื่อเปิดไพ่</small></div>
+      <div class="face front">
+        <div class="f-ico" id="fIco"></div>
+        <div class="f-name" id="fName"></div>
+        <div class="f-mean" id="fMean"></div>
+        <div class="f-msg" id="fMsg"></div>
+      </div>
+    </div>
+  </div>
+  <button class="btn" id="redrawBtn" style="display:none">เปิดไพ่ใหม่ ✦</button>
+</section>
+
+<!-- ดูดวงวันนี้ -->
+<section class="screen" id="fortune">
+  <button class="back" data-back>← เสี่ยงทายกับดาว</button>
+  <h2 class="title">ดูดวงประจำวันนี้</h2>
+  <div class="lead" id="fdate"></div>
+  <div class="fortune">
+    <div class="frow"><div class="flabel">🔮 ภาพรวมวันนี้</div><div class="fval" id="fOverall"></div></div>
+    <div class="frow"><div class="flabel">💖 ความรัก</div><div class="fval" id="fLove"></div></div>
+    <div class="frow inline"><div><span class="flabel">🌈 สีมงคล</span></div>
+      <div class="fval" id="fColor"></div></div>
+    <div class="frow inline"><div><span class="flabel">🔢 เลขนำโชค</span></div>
+      <div class="luckynum" id="fNum"></div></div>
+  </div>
+</section>
+
+<!-- ขอพร -->
+<section class="screen" id="manifest">
+  <button class="back" data-back>← เสี่ยงทายกับดาว</button>
+  <h2 class="title">ขอพรกับจักรวาล</h2>
+  <div class="lead">พิมพ์สิ่งที่อยากขอ แล้วส่งขึ้นไปให้จักรวาล เชื่อมั่นแล้วมันจะเป็นจริงนะ ✦</div>
+  <input id="wishInput" placeholder="ขอให้…" autocomplete="off">
+  <button class="btn" id="wishBtn">ส่งขึ้นจักรวาล 🌟</button>
+  <div class="msgbox" id="wishMsg"></div>
+</section>
+
+<!-- ราศี -->
+<section class="screen" id="zodiac">
+  <button class="back" data-back>← เสี่ยงทายกับดาว</button>
+  <h2 class="title">ดวงความเข้ากันของเรา</h2>
+  <div class="zodiac">
+    <div class="zi"><div class="zsym">♌</div><div class="zname">ราศีสิงห์</div><div class="zwho">พี่เบล</div></div>
+    <div class="zheart">💖</div>
+    <div class="zi"><div class="zsym">♑</div><div class="zname">ราศีมังกร</div><div class="zwho">หนูกิ๊บ</div></div>
+  </div>
+  <div class="zpct" id="zpct"></div>
+  <div class="msgbox" id="zmsg"></div>
+</section>
+
+<script>
+/* ============================================================================
+   แก้ข้อความได้เลยตรงนี้
+   ============================================================================ */
+const MU = {
+  cards: [
+    {ico:"⭐", name:"ดาวแห่งโชค", mean:"โชคลาภ โอกาสดี", msg:"วันนี้มีเรื่องดี ๆ รออยู่ ยิ้มรับไว้เลยนะ ✦"},
+    {ico:"💖", name:"ดาวแห่งรัก", mean:"ความรัก ความอบอุ่น", msg:"มีคนแอบคิดถึงหนูอยู่นะ (ก็พี่ไง 🙈)"},
+    {ico:"🌙", name:"พระจันทร์", mean:"พักใจ สัญชาตญาณ", msg:"พักผ่อนให้พอ แล้วใจจะสงบขึ้นเยอะเลย 🌙"},
+    {ico:"🍀", name:"โคลเวอร์", mean:"โชคเล็ก ๆ น้อย ๆ", msg:"โชคดีกำลังจะแวะมา เปิดใจรับไว้นะ ✦"},
+    {ico:"🔑", name:"กุญแจทอง", mean:"โอกาสใหม่", msg:"ประตูบานใหม่กำลังจะเปิด กล้าที่จะก้าวนะ"},
+    {ico:"🌈", name:"สายรุ้ง", mean:"ความหวัง", msg:"หลังฝนมีรุ้งเสมอ เรื่องหนัก ๆ กำลังจะผ่านไปแล้ว 🌈"},
+    {ico:"🕊️", name:"นกพิราบ", mean:"ข่าวดี", msg:"ข่าวดีกำลังเดินทางมาหา ใจเย็น ๆ รอนะ"},
+    {ico:"🔥", name:"เปลวไฟ", mean:"พลัง แรงบันดาลใจ", msg:"พลังของหนูกำลังมาเต็ม ลุยเลยวันนี้! 🔥"},
+    {ico:"🌸", name:"ดอกไม้", mean:"เสน่ห์ ความสดใส", msg:"ความน่ารักของหนูจะดึงดูดสิ่งดี ๆ เข้ามานะ 🌸"},
+    {ico:"💎", name:"เพชร", mean:"คุณค่าในตัวเอง", msg:"คุณค่าของหนูส่องประกาย อย่าลืมภูมิใจในตัวเองนะ ✦"}
+  ],
+  overall: [
+    "ดวงโดยรวมสดใส ทำอะไรก็ลื่นไหล ✦",
+    "วันนี้เหมาะกับการพักและดูแลตัวเอง อย่าหักโหมนะ",
+    "มีจังหวะดี ๆ เข้ามา เจอโอกาสให้คว้าไว้เลย",
+    "ใจเย็น ๆ ไว้ วันนี้อาจมีเรื่องให้อดทนนิดหน่อย แต่ผ่านไปได้แน่",
+    "พลังบวกกำลังมาหา ยิ้มไว้แล้วสิ่งดี ๆ จะตามมา 🌟",
+    "วันนี้เป็นวันของหนูเลย มั่นใจเข้าไว้!",
+    "ทำอะไรด้วยใจเย็น ๆ จะราบรื่นเป็นพิเศษวันนี้"
+  ],
+  love: [
+    "ความรักวันนี้หวานเจี๊ยบ มีคนใส่ใจหนูอยู่นะ 💖",
+    "เปิดใจอีกนิด แล้วจะเจอความอบอุ่นที่รออยู่ ✦",
+    "คนสำคัญกำลังคิดถึงหนูอยู่เลยนะ",
+    "วันนี้เหมาะกับการบอกความรู้สึกดี ๆ ให้กัน",
+    "รอยยิ้มของหนูคือเสน่ห์วันนี้ ใครเห็นก็ปลื้ม 🌸",
+    "ความสัมพันธ์กำลังค่อย ๆ อบอุ่นขึ้นนะ ใจเย็น ๆ"
+  ],
+  colors: [
+    {n:"ชมพูโรส",c:"#f0a6c0"},{n:"ทองมงคล",c:"#f4d58d"},{n:"ม่วงมู",c:"#b39ddb"},
+    {n:"ฟ้าใส",c:"#8fc7e8"},{n:"ขาวมุก",c:"#f2f0fa"},{n:"เขียวมิ้นต์",c:"#a5e1c4"},{n:"พีชอ่อน",c:"#f5c1a5"}
+  ],
+  wishReplies: [
+    "จักรวาลรับคำขอของหนูแล้วนะ ✦ ขอให้เป็นจริง เชื่อมั่นไว้!",
+    "ส่งพลังขึ้นดาวให้แล้ว 🌟 สิ่งดี ๆ กำลังเดินทางมาหาหนู",
+    "ขอพรแล้วอย่าลืมลงมือทำด้วยนะ ✦ จักรวาลชอบคนที่ตั้งใจ",
+    "พี่ขอพรเดียวกับหนูด้วยเลย ✦ เดี๋ยวเราลุ้นให้เป็นจริงด้วยกันนะ"
+  ],
+  zodiacPercent: "92%",
+  zodiacMsg: "สิงห์ (พี่เบล) ที่อบอุ่นและจริงจังในความรัก เจอกับ มังกร (หนูกิ๊บ) ที่มั่นคงและน่าเชื่อถือ เป็นคู่ที่ค่อย ๆ สร้างความสัมพันธ์อย่างมั่นคง ยิ่งรู้จักยิ่งผูกพัน ✦ ถ้าดูแลกันดี ๆ ไปได้ไกลแน่นอน"
+};
+
+const CORNERS=[
+  {id:"cards",   em:"🃏", name:"เปิดไพ่ดาว",   desc:"ไพ่ทำนายประจำวัน"},
+  {id:"fortune", em:"🔮", name:"ดูดวงวันนี้",   desc:"รวม/รัก/สี/เลข"},
+  {id:"manifest",em:"🙏", name:"ขอพรกับจักรวาล", desc:"ส่งคำขอขึ้นฟ้า"},
+  {id:"zodiac",  em:"💫", name:"ดวงของเรา",     desc:"สิงห์ × มังกร"}
+];
+
+/* ---------- ท้องฟ้าพื้นหลัง ---------- */
+const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
+let W,H,DPR,stars=[],t=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
+  cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
+  stars=[];const n=Math.round(innerWidth*innerHeight/3000);
+  for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,
+    r:(Math.random()*1.1+.25)*DPR,tw:Math.random()*6.28,sp:Math.random()*.02+.005,d:Math.random()*.5+.5});}
+addEventListener('resize',resize);resize();
+(function loop(){t+=reduce?0:1;ctx.clearRect(0,0,W,H);
+  for(const s of stars){const tw=reduce?.7:(Math.sin(t*s.sp+s.tw)*.4+.6);
+    ctx.fillStyle="rgba(230,235,255,"+(tw*s.d)+")";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();}
+  requestAnimationFrame(loop);})();
+
+/* ---------- ตัวจัดการหน้าจอ ---------- */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if(id==='fortune')renderFortune();
+  if(id==='zodiac')renderZodiac();}
+document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('menu'));
+const grid=document.getElementById('cornerGrid');
+CORNERS.forEach(c=>{const b=document.createElement('button');b.className='corner';
+  b.innerHTML='<span class="em">'+c.em+'</span><span class="cn">'+c.name+'</span><span class="cd">'+c.desc+'</span>';
+  b.onclick=()=>show(c.id);grid.appendChild(b);});
+
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function daySeed(){const d=new Date();return d.getFullYear()*372+(d.getMonth()+1)*31+d.getDate();}
+
+/* ---------- ไพ่ดาว ---------- */
+const card3d=document.getElementById('card3d'),redrawBtn=document.getElementById('redrawBtn');
+function drawCard(){const c=pick(MU.cards);
+  document.getElementById('fIco').textContent=c.ico;
+  document.getElementById('fName').textContent=c.name;
+  document.getElementById('fMean').textContent=c.mean;
+  document.getElementById('fMsg').textContent=c.msg;
+  card3d.classList.add('flipped');redrawBtn.style.display='inline-block';}
+card3d.onclick=function(){if(!card3d.classList.contains('flipped'))drawCard();};
+redrawBtn.onclick=function(){card3d.classList.remove('flipped');
+  setTimeout(drawCard,650);};
+
+/* ---------- ดูดวงวันนี้ ---------- */
+function renderFortune(){const s=daySeed();
+  const d=new Date();document.getElementById('fdate').textContent=
+    'ประจำวันที่ '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+  document.getElementById('fOverall').textContent=MU.overall[s%MU.overall.length];
+  document.getElementById('fLove').textContent=MU.love[(s+3)%MU.love.length];
+  const col=MU.colors[(s+5)%MU.colors.length];
+  document.getElementById('fColor').innerHTML='<span class="swatch" style="background:'+col.c+'"></span>'+col.n;
+  document.getElementById('fNum').textContent=(s+7)%10;
+}
+
+/* ---------- ขอพร ---------- */
+function launchWish(){
+  const s=document.createElement('div');s.className='wishstar';document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1800);
+  document.getElementById('wishMsg').textContent=pick(MU.wishReplies);
+  document.getElementById('wishInput').value='';
+}
+document.getElementById('wishBtn').onclick=launchWish;
+document.getElementById('wishInput').addEventListener('keydown',e=>{if(e.key==='Enter')launchWish();});
+
+/* ---------- ราศี ---------- */
+function renderZodiac(){document.getElementById('zpct').textContent=MU.zodiacPercent+' เข้ากัน';
+  document.getElementById('zmsg').textContent=MU.zodiacMsg;}
+</script>
+</body>
+</html>
