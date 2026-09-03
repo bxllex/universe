@@ -6,85 +6,99 @@
 <title>ดาวดวงเดียวกัน</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500&family=Sarabun:wght@300;400&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&family=Sarabun:wght@300;400&family=Cormorant+Garamond:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg-0:#04050c; --bg-1:#0a0f22; --bg-2:#0e1430;
-  --ink:#edf0f7; --muted:#868ca6; --faint:#5a6080;
-  --gold:#e6cf96; --gold-2:#cbb277;
-  --goldline:rgba(230,207,150,.24); --line:rgba(255,255,255,.08);
+  --bg-0:#04050c; --ink:#eef1f8; --muted:#8b91ab; --faint:#5c6284;
+  --gold:#e6cf96; --gold-2:#cbb277; --goldline:rgba(230,207,150,.28); --line:rgba(255,255,255,.09);
+  --card:rgba(255,255,255,.045);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden}
-body{font-family:'Sarabun',system-ui,sans-serif;color:var(--ink);position:fixed;inset:0;
+html,body{min-height:100%}
+body{font-family:'Sarabun',system-ui,sans-serif;color:var(--ink);min-height:100vh;
   background:
-    radial-gradient(80% 55% at 50% 8%, rgba(30,40,80,.55), rgba(10,15,34,0) 60%),
-    linear-gradient(180deg,#080b1a 0%, var(--bg-0) 70%, #020308 100%);}
-/* vignette เพิ่มความลึก ดูแพง */
+    radial-gradient(70% 50% at 50% 6%, rgba(34,45,88,.5), rgba(10,15,34,0) 60%),
+    linear-gradient(180deg,#080b1a 0%, var(--bg-0) 72%, #020308 100%) fixed;}
 body::after{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
-  background:radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%)}
+  background:radial-gradient(120% 90% at 50% 42%, rgba(0,0,0,0) 52%, rgba(0,0,0,.55) 100%)}
 canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
 
-/* ---------- ส่วนหัว ---------- */
-.top{position:fixed;top:0;left:0;right:0;z-index:5;text-align:center;padding:46px 22px 0;
-  opacity:0;transform:translateY(-6px);transition:opacity 1s ease .3s,transform 1s ease .3s;
-  pointer-events:none}
-body.open .top{opacity:1;transform:none}
-.eyebrow{font-family:'Sarabun';font-size:11px;letter-spacing:.42em;color:var(--gold);
-  text-indent:.42em;opacity:.9}
-.top h1{font-family:'Prompt',sans-serif;font-weight:400;font-size:clamp(26px,7vw,38px);
-  letter-spacing:.02em;margin-top:8px}
-.rule{width:46px;height:1px;margin:14px auto 0;
-  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-.top .accent{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;
-  color:var(--muted);margin-top:12px;letter-spacing:.02em}
-.top .hint{color:var(--faint);font-size:12px;margin-top:8px}
+.stage{position:relative;z-index:3;min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:52px 22px}
+.wrap{width:100%;max-width:600px;opacity:0;transform:translateY(10px);
+  transition:opacity .9s ease,transform .9s ease}
+body.open .wrap{opacity:1;transform:none}
 
-/* ---------- ดวงดาวเมนู ---------- */
-.stars{position:fixed;inset:0;z-index:4}
-.star-link{position:absolute;transform:translate(-50%,-50%);opacity:0;
-  display:flex;flex-direction:column;align-items:center;gap:11px;text-decoration:none;
-  transition:opacity .8s ease;cursor:pointer}
-body.open .star-link{opacity:1}
-.node{position:relative;width:9px;height:9px;border-radius:50%;background:#fff;
-  box-shadow:0 0 10px rgba(255,255,255,.7),0 0 22px var(--goldline);transition:all .35s ease}
-.node::after{content:"";position:absolute;inset:-9px;border-radius:50%;
-  border:1px solid var(--goldline);opacity:0;transform:scale(.6);transition:all .35s ease}
-.star-link.hero .node{width:13px;height:13px;
-  box-shadow:0 0 16px rgba(255,255,255,.85),0 0 34px rgba(230,207,150,.5)}
-.star-link:hover .node,.star-link:focus-visible .node{transform:scale(1.15);
-  box-shadow:0 0 16px #fff,0 0 40px var(--gold)}
-.star-link:hover .node::after,.star-link:focus-visible .node::after{opacity:1;transform:scale(1)}
-.label{font-family:'Prompt',sans-serif;font-weight:400;font-size:13.5px;color:var(--ink);
-  white-space:nowrap;text-shadow:0 1px 10px rgba(0,0,0,.8);transition:color .3s}
-.star-link.hero .label{font-size:15.5px;letter-spacing:.01em}
-.sub{font-family:'Sarabun';font-size:10.5px;letter-spacing:.16em;color:var(--faint);
-  text-transform:none;margin-top:-6px;text-shadow:0 1px 8px rgba(0,0,0,.8)}
-.star-link:hover .label,.star-link:focus-visible .label{color:var(--gold)}
-.star-link:focus-visible{outline:none}
-
-/* ---------- หน้าล็อก ---------- */
-.lock{position:fixed;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;
-  padding:28px;transition:opacity .8s ease;text-align:center}
-.lock.hide{opacity:0;pointer-events:none}
-.lock .card{max-width:330px;width:100%}
-.emblem{width:66px;height:66px;margin:0 auto 22px;border-radius:50%;position:relative;
+/* header */
+.head{text-align:center;margin-bottom:30px}
+.emblem{width:60px;height:60px;margin:0 auto 18px;border-radius:50%;position:relative;
   border:1px solid var(--goldline);display:flex;align-items:center;justify-content:center;
   box-shadow:0 0 30px rgba(230,207,150,.14), inset 0 0 20px rgba(230,207,150,.06)}
 .emblem span{font-size:22px;color:var(--gold);text-shadow:0 0 16px rgba(230,207,150,.6)}
-.emblem::before{content:"";position:absolute;inset:-6px;border-radius:50%;
-  border:1px solid rgba(230,207,150,.1)}
-.lock .eyebrow{margin-bottom:10px;display:block}
-.lock h1{font-family:'Prompt',sans-serif;font-weight:400;font-size:27px;letter-spacing:.02em}
+.eyebrow{font-family:'Sarabun';font-size:11px;letter-spacing:.38em;color:var(--gold);
+  text-indent:.38em;opacity:.9}
+.head h1{font-family:'Prompt',sans-serif;font-weight:400;font-size:clamp(30px,7vw,44px);
+  letter-spacing:.02em;margin-top:10px}
+.rule{width:46px;height:1px;margin:15px auto 0;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.head .accent{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;
+  color:var(--muted);margin-top:12px}
+
+/* cards */
+.card{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--ink);
+  background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease,background .3s ease}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+  background:linear-gradient(180deg,transparent,var(--gold),transparent);opacity:0;transition:opacity .3s}
+.card:hover,.card:focus-visible{transform:translateY(-3px);border-color:var(--goldline);
+  background:rgba(255,255,255,.06);box-shadow:0 16px 40px rgba(0,0,0,.45),0 0 26px rgba(230,207,150,.08);outline:none}
+.card:hover::before,.card:focus-visible::before{opacity:1}
+.card .ico{width:46px;height:46px;flex:none;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:21px;background:rgba(230,207,150,.08);
+  border:1px solid var(--goldline);box-shadow:inset 0 0 14px rgba(230,207,150,.08)}
+.card .tx h3{font-family:'Prompt',sans-serif;font-weight:500;font-size:16px;letter-spacing:.01em}
+.card .tx p{color:var(--muted);font-size:12px;letter-spacing:.03em;margin-top:3px}
+.card .arw{margin-left:auto;color:var(--faint);font-size:16px;transition:color .3s,transform .3s}
+.card:hover .arw,.card:focus-visible .arw{color:var(--gold);transform:translateX(3px)}
+
+/* feature (hero) card */
+.card.feature{padding:24px;margin-bottom:14px;
+  background:linear-gradient(120deg,rgba(230,207,150,.08),rgba(255,255,255,.03))}
+.card.feature .ico{width:56px;height:56px;font-size:26px;
+  background:radial-gradient(circle at 38% 32%,#fff6df,#e6cf96 60%,#c9ac6e);
+  color:#5a4a1e;border-color:rgba(255,255,255,.5);box-shadow:0 0 22px rgba(230,207,150,.35)}
+.card.feature .tx h3{font-size:19px;font-weight:600}
+.card.feature .tx p{font-size:12.5px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+
+.section-label{font-family:'Sarabun';font-size:11px;letter-spacing:.34em;color:var(--faint);
+  text-indent:.34em;margin:26px 4px 12px}
+
+.foot{text-align:center;margin-top:30px;font-family:'Cormorant Garamond',serif;font-style:italic;
+  color:var(--faint);font-size:14px}
+
+/* stagger */
+body.open .card{animation:rise .6s ease backwards}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ---------- หน้าล็อก ---------- */
+.lock{position:fixed;inset:0;z-index:9;display:flex;align-items:center;justify-content:center;
+  padding:28px;transition:opacity .8s ease;text-align:center;
+  background:linear-gradient(180deg,#080b1a,#04050c)}
+.lock.hide{opacity:0;pointer-events:none}
+.lock .lcard{max-width:330px;width:100%}
+.lock h1{font-family:'Prompt',sans-serif;font-weight:400;font-size:28px;letter-spacing:.02em}
 .lock .accent{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;
   color:var(--muted);margin:8px 0 26px}
-.field{position:relative;margin-top:6px}
-.lock input{width:100%;background:rgba(255,255,255,.035);border:1px solid var(--line);
+.lock input{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line);
   border-radius:14px;color:var(--ink);padding:15px 18px;font-family:'Sarabun',sans-serif;
-  font-size:15px;text-align:center;letter-spacing:.32em;outline:none;transition:border-color .35s,box-shadow .35s}
+  font-size:15px;text-align:center;letter-spacing:.3em;outline:none;transition:border-color .35s,box-shadow .35s}
 .lock input::placeholder{letter-spacing:.06em;color:var(--faint)}
 .lock input:focus{border-color:var(--goldline);box-shadow:0 0 0 1px var(--goldline),0 0 24px rgba(230,207,150,.1)}
-.lock .err{color:#e6a6a6;font-size:12.5px;height:16px;margin:12px 0 0;opacity:0;transition:opacity .3s}
+.lock .err{color:#e6a6a6;font-size:12.5px;height:16px;margin-top:12px;opacity:0;transition:opacity .3s}
 .lock .err.show{opacity:1}
 .btn{width:100%;margin-top:18px;font-family:'Prompt',sans-serif;font-weight:500;font-size:15px;
   letter-spacing:.06em;color:#221a08;cursor:pointer;border:1px solid rgba(255,255,255,.35);
@@ -92,46 +106,43 @@ body.open .star-link{opacity:1}
   box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.5);transition:transform .3s,box-shadow .3s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(230,207,150,.28),inset 0 1px 0 rgba(255,255,255,.5)}
 .btn:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.lock .hintx{color:var(--faint);font-size:12px;margin-top:16px;cursor:pointer;letter-spacing:.02em;
+.lock .hintx{color:var(--faint);font-size:12px;margin-top:16px;cursor:pointer;
   border-bottom:1px dotted var(--line);display:inline-block;padding-bottom:2px}
 .lock .hintx:hover{color:var(--muted)}
 .lock .hintx b{color:var(--gold);font-weight:400}
-.lock.shake .card{animation:shake .4s}
+.lock .emblem{margin-bottom:20px}
+.lock.shake .lcard{animation:shake .4s}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
-
-.foot{position:fixed;bottom:18px;left:0;right:0;z-index:5;text-align:center;
-  font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--faint);font-size:13px;
-  opacity:0;transition:opacity 1s ease 1s}
-body.open .foot{opacity:.7}
-
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001s!important;transition-duration:.25s!important}}
 </style>
 </head>
 <body>
 <canvas id="sky"></canvas>
 
-<div class="top">
-  <span class="eyebrow">ยินดีต้อนรับนะหนูกิ๊บ</span>
-  <h1>ดาวดวงเดียวกัน</h1>
-  <div class="rule"></div>
-  <div class="accent">under the same sky</div>
-  <div class="hint">แตะดวงดาวเพื่อไปแต่ละที่</div>
+<div class="stage">
+  <div class="wrap">
+    <div class="head">
+      <div class="emblem"><span>✦</span></div>
+      <span class="eyebrow">ยินดีต้อนรับนะหนูกิ๊บ</span>
+      <h1>ดาวดวงเดียวกัน</h1>
+      <div class="rule"></div>
+      <div class="accent">under the same sky</div>
+    </div>
+    <div id="feature"></div>
+    <div class="section-label">ห้องความทรงจำ &amp; มุมของเรา</div>
+    <div class="grid" id="grid"></div>
+    <div class="foot">made for you, under one sky</div>
+  </div>
 </div>
-
-<div class="stars" id="stars"></div>
-
-<div class="foot">made for you, under one sky</div>
 
 <!-- หน้าล็อก -->
 <div class="lock" id="lock">
-  <div class="card">
+  <div class="lcard">
     <div class="emblem"><span>✦</span></div>
     <span class="eyebrow">private</span>
     <h1>ดาวดวงเดียวกัน</h1>
     <div class="accent">a little universe, only for you</div>
-    <div class="field">
-      <input id="pw" type="password" inputmode="text" placeholder="ใส่รหัสเข้ามานะ" autocomplete="off">
-    </div>
+    <input id="pw" type="password" inputmode="text" placeholder="ใส่รหัสเข้ามานะ" autocomplete="off">
     <div class="err" id="err">รหัสยังไม่ถูกนะ ลองอีกทีน้า</div>
     <button class="btn" id="enterBtn">เข้ามาดูดาวกัน</button>
     <div class="hintx" id="hintBtn">ลืมรหัส? แตะดูคำใบ้</div>
@@ -140,42 +151,32 @@ body.open .foot{opacity:.7}
 
 <script>
 /* ============================================================================
-   แก้ตรงนี้ได้เลย — รหัส, คำใบ้, ตำแหน่งดาว (x,y เปอร์เซ็นต์ 0–100), ลิงก์
+   แก้ตรงนี้ได้เลย — รหัส, คำใบ้, เมนู (ไอคอน/ชื่อ/คำอธิบาย/ลิงก์)
    ============================================================================ */
 const HUB = {
   password: "0815",
   hint: "เดือนกับวันที่เราเจอกันครั้งแรก (ตัวเลข 4 หลัก)",
-  stars: [
-    { id:"hero", hero:true, icon:"✦", title:"ดาวดวงเดียวกัน", sub:"เรื่องราวของเรา",
-      url:"universe.html", x:50, y:47 },
-    { icon:"💌", title:"ถึงหนู… ผ่านเพลง", sub:"imhere",
-      url:"https://bxllex.github.io/imhere/", x:22, y:26 },
-    { icon:"🎁", title:"กล่องสุ่มคำหวาน", sub:"lovebox",
-      url:"https://bxllex.github.io/love-box-/", x:78, y:27 },
-    { icon:"🖤", title:"ถึงหนู 🖤", sub:"make-up",
-      url:"https://bxllex.github.io/make-up-with-you/", x:34, y:80 },
-    { icon:"🫧", title:"มุมพักใจ", sub:"ไว้ให้หายเหนื่อย",
-      url:"rest.html", x:17, y:56 },
-    { icon:"🪐", title:"ดาวเคราะห์ของเรา", sub:"หมุน สำรวจ ปลูกดาว",
-      url:"planet.html", x:83, y:57 },
-    { icon:"🔮", title:"เสี่ยงทายกับดาว", sub:"สำหรับสายมู",
-      url:"mu.html", x:66, y:80 }
-  ],
-  links: [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6]]
+  items: [
+    { hero:true, icon:"✦", title:"ดาวดวงเดียวกัน", sub:"เรื่องราวของเรา 6 บท + ดาวที่คุยได้", url:"universe.html" },
+    { icon:"💌", title:"ถึงหนู… ผ่านเพลง", sub:"imhere", url:"https://bxllex.github.io/imhere/" },
+    { icon:"🎁", title:"กล่องสุ่มคำหวาน", sub:"lovebox", url:"https://bxllex.github.io/love-box-/" },
+    { icon:"🖤", title:"ถึงหนู", sub:"make-up", url:"https://bxllex.github.io/make-up-with-you/" },
+    { icon:"🫧", title:"มุมพักใจ", sub:"ไว้ให้หายเหนื่อย", url:"rest.html" },
+    { icon:"🪐", title:"ดาวเคราะห์ของเรา", sub:"หมุน สำรวจ ปลูกดาว", url:"planet.html" },
+    { icon:"🔮", title:"เสี่ยงทายกับดาว", sub:"สำหรับสายมู", url:"mu.html" }
+  ]
 };
 
-/* ---------- ท้องฟ้า + เส้นกลุ่มดาว (canvas) ---------- */
+/* ---------- ท้องฟ้าพื้นหลัง ---------- */
 const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
-let W,H,DPR,bg=[],t=0,opened=false,lineT=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W,H,DPR,bg=[],t=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
   cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
-  bg=[];const n=Math.round(innerWidth*innerHeight/3400);
+  bg=[];const n=Math.round(innerWidth*innerHeight/3600);
   for(let i=0;i<n;i++){const gold=Math.random()<.22;
     bg.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1+.25)*DPR,
-      tw:Math.random()*6.28,sp:Math.random()*.018+.004,d:Math.random()*.5+.4,gold,
-      glint:Math.random()<.04});}}
+      tw:Math.random()*6.28,sp:Math.random()*.018+.004,d:Math.random()*.5+.4,gold,glint:Math.random()<.04});}}
 addEventListener('resize',resize);resize();
-function pt(s){return [W*s.x/100, H*s.y/100];}
 (function loop(){t+=reduce?0:1;ctx.clearRect(0,0,W,H);
   for(const s of bg){const tw=reduce?.7:(Math.sin(t*s.sp+s.tw)*.45+.55);
     const col=s.gold?"230,207,150":"236,240,248";
@@ -183,37 +184,32 @@ function pt(s){return [W*s.x/100, H*s.y/100];}
     if(s.glint){ctx.strokeStyle="rgba("+col+","+(tw*s.d*.5)+")";ctx.lineWidth=.6*DPR;
       const g=s.r*3.2;ctx.beginPath();ctx.moveTo(s.x-g,s.y);ctx.lineTo(s.x+g,s.y);
       ctx.moveTo(s.x,s.y-g);ctx.lineTo(s.x,s.y+g);ctx.stroke();}}
-  if(opened){
-    lineT=Math.min(1,lineT+(reduce?1:.01));
-    ctx.strokeStyle="rgba(230,207,150,.20)";ctx.lineWidth=.8*DPR;
-    const total=HUB.links.length,shown=lineT*total;
-    HUB.links.forEach((l,idx)=>{const a=pt(HUB.stars[l[0]]),b=pt(HUB.stars[l[1]]);
-      const f=Math.max(0,Math.min(1,shown-idx));if(f<=0)return;
-      ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f);ctx.stroke();});
-  }
   requestAnimationFrame(loop);})();
 
-/* ---------- สร้างดวงดาวเมนู ---------- */
-const starsEl=document.getElementById('stars');
-HUB.stars.forEach((s,i)=>{
-  const notSet=s.url.indexOf('https://ใส่')===0;
-  const a=document.createElement('a');a.className='star-link'+(s.hero?' hero':'');
-  a.href=notSet?'#':s.url;a.style.left=s.x+'%';a.style.top=s.y+'%';
-  if(!notSet && s.url.indexOf('http')===0)a.target='_blank';
-  a.setAttribute('aria-label',s.title);
-  a.style.transitionDelay=(.4+i*.12)+'s';
-  a.innerHTML='<span class="node"></span><span class="label">'+s.title+'</span>'+
-    (s.sub?'<span class="sub">'+s.sub+'</span>':'');
-  starsEl.appendChild(a);
+/* ---------- สร้างการ์ด ---------- */
+function makeCard(m,feature,delay){
+  const notSet=m.url.indexOf('https://ใส่')===0;
+  const a=document.createElement('a');a.className='card'+(feature?' feature':'');
+  a.href=notSet?'#':m.url;
+  if(!notSet && m.url.indexOf('http')===0)a.target='_blank';
+  a.style.animationDelay=delay+'s';
+  a.innerHTML='<div class="ico">'+m.icon+'</div><div class="tx"><h3>'+m.title+'</h3>'+
+    (m.sub?'<p>'+m.sub+'</p>':'')+'</div><div class="arw">→</div>';
+  return a;
+}
+const feature=document.getElementById('feature'),grid=document.getElementById('grid');
+HUB.items.forEach((m,i)=>{
+  if(m.hero)feature.appendChild(makeCard(m,true,.3));
+  else grid.appendChild(makeCard(m,false,.4+i*.06));
 });
 
 /* ---------- ล็อก ---------- */
 const lock=document.getElementById('lock'),pw=document.getElementById('pw'),err=document.getElementById('err');
 function unlocked(){try{return sessionStorage.getItem('u')==='1';}catch(e){return false;}}
 function markUnlocked(){try{sessionStorage.setItem('u','1');}catch(e){}}
-function openMap(){opened=true;document.body.classList.add('open');lock.classList.add('hide');}
+function openHub(){document.body.classList.add('open');lock.classList.add('hide');}
 function tryEnter(){
-  if(pw.value.trim()===String(HUB.password)){markUnlocked();openMap();}
+  if(pw.value.trim()===String(HUB.password)){markUnlocked();openHub();}
   else{err.classList.add('show');lock.classList.add('shake');pw.value='';pw.focus();
     setTimeout(function(){err.classList.remove('show');lock.classList.remove('shake');},2400);}
 }
@@ -222,7 +218,7 @@ pw.addEventListener('keydown',function(e){if(e.key==='Enter')tryEnter();});
 document.getElementById('hintBtn').onclick=function(){
   this.innerHTML = HUB.hint ? ("คำใบ้: <b>"+HUB.hint+"</b>") : "พี่เบลไม่ได้ใส่คำใบ้ไว้";
 };
-if(unlocked())openMap();
+if(unlocked())openHub();
 </script>
 </body>
 </html>
