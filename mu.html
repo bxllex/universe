@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Sarabun:wght@300;400;600&family=Itim&display=swap" rel="stylesheet">
 <style>
 :root{
-  --night-0:#070b1e;--night-1:#0d1330;--night-2:#1a1b42;--nebula:#2a1f4d;
-  --star-gold:#f4d58d;--rose:#f0a6c0;--purple:#b39ddb;--text:#efe9ff;--muted:#9296c0;--glass:rgba(20,24,58,.55);
+  --night-0:#070b1e;--night-1:#0d1330;--nebula:#2a1f4d;
+  --gold:#f4d58d;--rose:#f0a6c0;--purple:#b39ddb;--text:#efe9ff;--muted:#9296c0;--glass:rgba(20,24,58,.55);
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
@@ -24,21 +24,23 @@ canvas#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
   background:var(--glass);border:1px solid rgba(240,166,192,.25);color:var(--text);
   backdrop-filter:blur(8px);font-family:'Sarabun',sans-serif;font-size:13px;text-decoration:none}
 .home-link:hover{background:rgba(240,166,192,.18)}
-.home-link:focus-visible{outline:3px solid var(--star-gold);outline-offset:2px}
+.home-link:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 
 .screen{position:fixed;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;
-  justify-content:center;padding:64px 24px 34px;text-align:center;overflow-y:auto}
+  justify-content:flex-start;padding:64px 22px 40px;text-align:center;overflow-y:auto}
 .screen.on{display:flex;animation:fade .5s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.screen.center{justify-content:center}
 .back{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:20;color:var(--muted);
   background:none;border:none;font-family:'Sarabun';font-size:13.5px;cursor:pointer}
 .back:hover{color:var(--text)}
 h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.4vw,28px);
   text-shadow:0 0 24px rgba(179,157,219,.35)}
-.lead{color:var(--muted);font-size:14px;margin-top:6px;max-width:22em}
+.lead{color:var(--muted);font-size:14px;margin-top:6px;max-width:23em;line-height:1.6}
 
+#menu{justify-content:center}
 #menu .welcome{font-family:'Itim',cursive;color:var(--purple);font-size:17px;margin-bottom:2px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;width:100%;max-width:420px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;width:100%;max-width:440px}
 .corner{background:linear-gradient(160deg,rgba(38,28,66,.72),rgba(16,18,46,.72));
   border:1px solid rgba(179,157,219,.28);border-radius:18px;padding:18px 12px;cursor:pointer;
   color:var(--text);display:flex;flex-direction:column;align-items:center;gap:8px;
@@ -52,84 +54,68 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.
 
 .btn{font-family:'Sarabun',sans-serif;font-size:16px;color:var(--night-0);
   background:linear-gradient(135deg,#e6c8f5,#f0a6c0);border:none;border-radius:100px;
-  padding:13px 28px;cursor:pointer;margin-top:22px;box-shadow:0 8px 30px rgba(179,157,219,.3);
-  transition:transform .3s}
+  padding:13px 28px;cursor:pointer;margin-top:20px;box-shadow:0 8px 30px rgba(179,157,219,.3);transition:transform .3s}
 .btn:hover{transform:translateY(-2px)}.btn:active{transform:scale(.97)}
 .btn:focus-visible{outline:3px solid var(--purple);outline-offset:3px}
-.msgbox{margin-top:20px;min-height:60px;max-width:22em;font-family:'Itim',cursive;font-size:18px;
-  line-height:1.7;color:#f2ecfb}
+.tabs{display:inline-flex;gap:6px;margin-top:16px;background:rgba(255,255,255,.05);
+  border:1px solid rgba(179,157,219,.25);border-radius:100px;padding:4px;flex-wrap:wrap;justify-content:center}
+.tab{font-family:'Sarabun',sans-serif;font-size:13px;color:var(--muted);background:none;border:none;
+  border-radius:100px;padding:8px 16px;cursor:pointer;transition:all .25s}
+.tab.on{background:linear-gradient(135deg,#e6c8f5,#f0a6c0);color:var(--night-0);font-weight:600}
+.tab:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+.mu-input{width:100%;max-width:320px;margin-top:16px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(179,157,219,.3);border-radius:100px;color:var(--text);padding:13px 18px;
+  font-family:'Sarabun',sans-serif;font-size:15px;text-align:center;outline:none}
+.mu-input:focus{border-color:rgba(179,157,219,.6)}
 
-/* ---------- ไพ่ทาโรต์ ---------- */
+/* การ์ดไพ่/เซียมซี */
 .deck{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:18px 0 6px}
-.tpos{font-family:'Prompt',sans-serif;font-size:12px;color:var(--purple);margin-bottom:6px;text-align:center}
+.tpos{font-family:'Prompt',sans-serif;font-size:12px;color:var(--purple);margin-bottom:6px}
 .tcard{width:150px;height:228px;perspective:1000px;cursor:pointer}
-.tcard.sm{width:96px;height:150px}
-.ti{position:relative;width:100%;height:100%;transform-style:preserve-3d;
-  transition:transform .8s cubic-bezier(.4,.2,.2,1)}
+.tcard.sm{width:100px;height:156px}
+.ti{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.4,.2,.2,1)}
 .tcard.flipped .ti{transform:rotateY(180deg)}
 .tface{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;
   flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center;
   border:1px solid rgba(244,213,141,.4);box-shadow:0 10px 28px rgba(0,0,0,.45)}
-.tback{background:
-   repeating-linear-gradient(45deg, rgba(244,213,141,.06) 0 6px, transparent 6px 12px),
+.tback{background:repeating-linear-gradient(45deg,rgba(244,213,141,.06) 0 6px,transparent 6px 12px),
    radial-gradient(circle at 50% 35%,#3a2f66,#171a3d)}
-.tback span{font-size:38px;filter:drop-shadow(0 0 12px var(--star-gold))}
-.tfront{transform:rotateY(180deg);background:linear-gradient(180deg,#2a2350,#14142f);
-   border-color:rgba(179,157,219,.5)}
-.tico{font-size:40px;transition:transform .4s}
-.tcard.sm .tico{font-size:30px}
-.tname{font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;color:var(--star-gold);
-   margin-top:6px;line-height:1.2}
+.tback span{font-size:38px;filter:drop-shadow(0 0 12px var(--gold))}
+.tfront{transform:rotateY(180deg);background:linear-gradient(180deg,#2a2350,#14142f);border-color:rgba(179,157,219,.5)}
+.tico{font-size:40px;transition:transform .4s}.tcard.sm .tico{font-size:30px}
+.tname{font-family:'Prompt',sans-serif;font-weight:600;font-size:14px;color:var(--gold);margin-top:6px;line-height:1.2}
 .tcard.sm .tname{font-size:11px}
 .torient{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* กล่องผลลัพธ์ */
 .reading{width:100%;max-width:400px;margin-top:12px;display:flex;flex-direction:column;gap:10px}
 .rblock{background:rgba(255,255,255,.05);border:1px solid rgba(179,157,219,.22);border-radius:16px;
   padding:13px 16px;text-align:left}
-.rblock .rh{font-family:'Prompt',sans-serif;font-size:14px;color:var(--star-gold);margin-bottom:7px}
+.rblock .rh{font-family:'Prompt',sans-serif;font-size:14px;color:var(--gold);margin-bottom:7px}
 .rblock .rh small{color:var(--muted);font-weight:400;font-size:12px}
 .rrow{font-size:13.5px;line-height:1.6;color:#f2ecfb;margin:3px 0}
 .rrow b{color:var(--purple);font-weight:500}
-.rnote{font-family:'Itim',cursive;font-size:15px;color:var(--rose);text-align:center;
-  padding:4px 6px;line-height:1.6}
-
-/* ---------- ดูดวงวันนี้ ---------- */
-.fortune{width:100%;max-width:360px;margin-top:18px;display:flex;flex-direction:column;gap:12px}
-.frow{background:rgba(255,255,255,.05);border:1px solid rgba(179,157,219,.22);border-radius:16px;
-  padding:14px 16px;text-align:left}
-.frow .flabel{font-family:'Prompt',sans-serif;font-size:12.5px;color:var(--purple);margin-bottom:4px}
-.frow .fval{font-size:14.5px;line-height:1.6;color:#f2ecfb}
-.frow.inline{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.swatch{display:inline-block;width:22px;height:22px;border-radius:50%;vertical-align:middle;
+.rnote{font-family:'Itim',cursive;font-size:15px;color:var(--rose);text-align:center;padding:4px 6px;line-height:1.6}
+.badge{display:inline-block;font-family:'Prompt';font-size:12px;padding:3px 12px;border-radius:100px;
+  background:rgba(244,213,141,.15);color:var(--gold);border:1px solid rgba(244,213,141,.3);margin-top:2px}
+.swatch{display:inline-block;width:20px;height:20px;border-radius:50%;vertical-align:middle;
   margin-right:8px;border:2px solid rgba(255,255,255,.4)}
-.luckynum{font-family:'Prompt',sans-serif;font-weight:600;font-size:24px;color:var(--star-gold)}
+.luckynum{font-family:'Prompt',sans-serif;font-weight:600;font-size:22px;color:var(--gold)}
+.frow.inline{display:flex;align-items:center;justify-content:space-between;gap:10px}
 
-/* ---------- ขอพร ---------- */
-#manifest input{width:100%;max-width:360px;margin-top:18px;background:rgba(255,255,255,.06);
-  border:1px solid rgba(179,157,219,.3);border-radius:100px;color:var(--text);padding:13px 18px;
-  font-family:'Sarabun',sans-serif;font-size:15px;text-align:center;outline:none}
-#manifest input:focus{border-color:rgba(179,157,219,.6)}
-.wishstar{position:fixed;left:26%;bottom:24%;width:9px;height:9px;border-radius:50%;z-index:12;
-  background:#fff;box-shadow:0 0 12px #fff,0 0 26px var(--star-gold);pointer-events:none;
-  animation:wishfly 1.7s ease-in forwards}
-@keyframes wishfly{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:1}
-  100%{opacity:0;transform:translate(50vw,-72vh) scale(1.1)}}
-
-/* ---------- ราศี ---------- */
-.ztabs{display:inline-flex;gap:6px;margin-top:18px;background:rgba(255,255,255,.05);
-  border:1px solid rgba(179,157,219,.25);border-radius:100px;padding:4px}
-.ztab{font-family:'Sarabun',sans-serif;font-size:13.5px;color:var(--muted);background:none;border:none;
-  border-radius:100px;padding:8px 18px;cursor:pointer;transition:all .25s}
-.ztab.on{background:linear-gradient(135deg,#e6c8f5,#f0a6c0);color:var(--night-0);font-weight:600}
-.ztab:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
-.zsysnote{color:var(--muted);font-size:11.5px;margin-top:12px;max-width:24em;line-height:1.5;opacity:.85}
-.zodiac{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:20px}.zi{display:flex;flex-direction:column;align-items:center;gap:4px}
-.zi .zsym{font-size:40px}
-.zi .zname{font-family:'Prompt',sans-serif;font-size:13px}
+/* ราศี */
+.zodiac{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:18px}
+.zi{display:flex;flex-direction:column;align-items:center;gap:4px}
+.zi .zsym{font-size:40px}.zi .zname{font-family:'Prompt',sans-serif;font-size:13px}
 .zi .zwho{font-size:11px;color:var(--muted)}
 .zheart{font-size:26px;animation:beat 1.4s ease-in-out infinite}
 @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
-.zpct{font-family:'Prompt',sans-serif;font-weight:600;font-size:34px;color:var(--star-gold);margin-top:16px;
+.zpct{font-family:'Prompt',sans-serif;font-weight:600;font-size:32px;color:var(--gold);margin-top:14px;
   text-shadow:0 0 22px rgba(244,213,141,.35)}
+.zsysnote{color:var(--muted);font-size:11.5px;margin-top:12px;max-width:24em;line-height:1.5;opacity:.85}
+.wishstar{position:fixed;left:26%;bottom:24%;width:9px;height:9px;border-radius:50%;z-index:12;
+  background:#fff;box-shadow:0 0 12px #fff,0 0 26px var(--gold);pointer-events:none;animation:wishfly 1.7s ease-in forwards}
+@keyframes wishfly{0%{opacity:0;transform:translate(0,0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translate(50vw,-72vh) scale(1.1)}}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001s!important;transition-duration:.3s!important}}
 </style>
 </head>
@@ -141,7 +127,7 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.
 <section class="screen on" id="menu">
   <div class="welcome">เอาใจสายมูของพี่หน่อย</div>
   <h2 class="title">เสี่ยงทายกับดาว ✦</h2>
-  <div class="lead">เปิดไพ่ ดูดวง ขอพร ให้จักรวาลนำโชคมาให้หนูนะ 🔮</div>
+  <div class="lead">เลือกวิธีดูดวงที่อยากลองได้เลยนะ 🔮</div>
   <div class="grid" id="cornerGrid"></div>
 </section>
 
@@ -149,315 +135,323 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.
 <section class="screen" id="cards">
   <button class="back" data-back>← เสี่ยงทายกับดาว</button>
   <h2 class="title">ไพ่ทาโรต์</h2>
-  <div class="ztabs">
-    <button class="ztab on" id="mode1">ไพ่วันนี้ (1 ใบ)</button>
-    <button class="ztab" id="mode3">3 ใบ · อดีต–ปัจจุบัน–อนาคต</button>
-  </div>
+  <div class="tabs"><button class="tab on" id="mode1">ไพ่วันนี้ (1 ใบ)</button>
+    <button class="tab" id="mode3">3 ใบ · อดีต-ปัจจุบัน-อนาคต</button></div>
   <div class="lead" id="cardsLead"></div>
   <div class="deck" id="deck"></div>
   <button class="btn" id="drawBtn">จั่วไพ่ ✦</button>
   <div class="reading" id="reading"></div>
 </section>
 
+<!-- เซียมซี -->
+<section class="screen" id="siamsi">
+  <button class="back" data-back>← เสี่ยงทายกับดาว</button>
+  <h2 class="title">เซียมซี</h2>
+  <div class="lead">ตั้งจิตอธิษฐาน แล้วเขย่าเซียมซีดูว่าได้ใบไหน ✦</div>
+  <button class="btn" id="siamBtn">🥠 เขย่าเซียมซี</button>
+  <div class="reading" id="siamReading"></div>
+</section>
+
 <!-- ดูดวงวันนี้ -->
-<section class="screen" id="fortune">
+<section class="screen" id="daily">
   <button class="back" data-back>← เสี่ยงทายกับดาว</button>
   <h2 class="title">ดูดวงประจำวันนี้</h2>
   <div class="lead" id="fdate"></div>
-  <div class="fortune">
-    <div class="frow"><div class="flabel">🔮 ภาพรวมวันนี้</div><div class="fval" id="fOverall"></div></div>
-    <div class="frow"><div class="flabel">💖 ความรัก</div><div class="fval" id="fLove"></div></div>
-    <div class="frow inline"><div><span class="flabel">🌈 สีมงคล</span></div>
-      <div class="fval" id="fColor"></div></div>
-    <div class="frow inline"><div><span class="flabel">🔢 เลขนำโชค</span></div>
-      <div class="luckynum" id="fNum"></div></div>
-  </div>
+  <div class="reading" id="dailyReading"></div>
 </section>
 
-<!-- ขอพร -->
-<section class="screen" id="manifest">
+<!-- เลขศาสตร์ -->
+<section class="screen" id="numero">
   <button class="back" data-back>← เสี่ยงทายกับดาว</button>
-  <h2 class="title">ขอพรกับจักรวาล</h2>
-  <div class="lead">พิมพ์สิ่งที่อยากขอ แล้วส่งขึ้นไปให้จักรวาล เชื่อมั่นแล้วมันจะเป็นจริงนะ ✦</div>
-  <input id="wishInput" placeholder="ขอให้…" autocomplete="off">
-  <button class="btn" id="wishBtn">ส่งขึ้นจักรวาล 🌟</button>
-  <div class="msgbox" id="wishMsg"></div>
+  <h2 class="title">เลขศาสตร์จากวันเกิด</h2>
+  <div class="lead">ใส่วันเกิดของหนู แล้วดูเลขชีวิตกับคำทำนายรอบด้าน ✦</div>
+  <input class="mu-input" id="birth" type="date">
+  <button class="btn" id="numBtn">คำนวณเลขชีวิต 🔢</button>
+  <div class="reading" id="numReading"></div>
 </section>
 
 <!-- ราศี -->
-<section class="screen" id="zodiac">
+<section class="screen center" id="zodiac">
   <button class="back" data-back>← เสี่ยงทายกับดาว</button>
   <h2 class="title">ดวงความเข้ากันของเรา</h2>
-  <div class="ztabs">
-    <button class="ztab on" id="tabIntl">สากล</button>
-    <button class="ztab" id="tabThai">ไทย</button>
-  </div>
+  <div class="tabs"><button class="tab on" id="tabIntl">สากล</button>
+    <button class="tab" id="tabThai">ไทย</button></div>
   <div class="zodiac">
     <div class="zi"><div class="zsym" id="belSym"></div><div class="zname" id="belName"></div><div class="zwho">พี่เบล</div></div>
     <div class="zheart">💖</div>
     <div class="zi"><div class="zsym" id="gibSym"></div><div class="zname" id="gibName"></div><div class="zwho">หนูกิ๊บ</div></div>
   </div>
   <div class="zpct" id="zpct"></div>
-  <div class="msgbox" id="zmsg"></div>
+  <div class="reading" style="margin-top:8px"><div class="rnote" id="zmsg"></div></div>
   <div class="zsysnote" id="zsysnote"></div>
 </section>
 
 <script>
 /* ============================================================================
-   แก้ข้อความได้เลยตรงนี้
+   แก้ข้อความได้ที่นี่ (ทั้งหมดเป็นคำที่แต่งขึ้นเอง ปรับได้ตามใจ)
    ============================================================================ */
-const MU = {
-  posLabels: ["อดีต","ปัจจุบัน","อนาคต"],
-  sweetNotes: [
-    "ไม่ว่าไพ่จะบอกอะไร พี่ก็อยู่ข้างหนูเสมอนะ ✦",
-    "ทำนายเป็นแค่แนวทาง คนที่เลือกทางเดินคือหนูเอง พี่เชื่อในตัวหนู 🤍",
-    "ถ้าวันนี้ดวงดีก็ดีใจด้วย ถ้าไม่ดีก็มีพี่คอยเป็นกำลังใจนะ ✦",
-    "ขอให้ไพ่นำแต่สิ่งดี ๆ มาให้หนูนะ 🌙"
-  ],
-  tarot: [
-    {ico:"🃏",n:"The Fool ผู้เริ่มต้น",
-     up:{key:"เริ่มต้นใหม่ ไร้กังวล",love:"กล้าเปิดใจให้ความรักครั้งใหม่",work:"โอกาสใหม่ ลองสิ่งที่ไม่เคยทำ",heart:"ปล่อยวาง สนุกกับปัจจุบัน",adv:"กล้าก้าวไป อย่ากลัวเกินไป"},
-     rev:{key:"หุนหัน ไม่รอบคอบ",love:"อย่ารีบร้อนเกินไปในความรัก",work:"คิดให้ดีก่อนตัดสินใจ",heart:"ระวังความประมาท",adv:"มีสตินิดนึงก่อนลงมือ"}},
-    {ico:"🎩",n:"The Magician นักมายากล",
-     up:{key:"พลังสร้างสรรค์ ทำได้ทุกอย่าง",love:"เสน่ห์แรง ดึงดูดคนเข้ามา",work:"ใช้ความสามารถได้เต็มที่",heart:"มั่นใจในตัวเอง",adv:"ลงมือเลย หนูมีของ"},
-     rev:{key:"ลังเล ไม่เชื่อมั่น",love:"สื่อสารให้ชัด อย่าเล่นเกม",work:"ขาดโฟกัส รวบรวมใจก่อน",heart:"อย่าดูถูกตัวเอง",adv:"เชื่อในศักยภาพตัวเองมากขึ้น"}},
-    {ico:"🔮",n:"The High Priestess นักบวชหญิง",
-     up:{key:"สัญชาตญาณ ความลับ",love:"ฟังใจตัวเอง มีบางอย่างซ่อนอยู่",work:"รอจังหวะ สังเกตให้ดี",heart:"เชื่อลางสังหรณ์",adv:"เงียบฟังเสียงในใจ"},
-     rev:{key:"เมินสัญชาตญาณ สับสน",love:"อย่าเก็บความรู้สึกไว้คนเดียว",work:"ข้อมูลไม่ครบ อย่าด่วนสรุป",heart:"ฟังใจตัวเองให้มากขึ้น",adv:"อย่าปิดกั้นความรู้สึกตัวเอง"}},
-    {ico:"👑",n:"The Empress จักรพรรดินี",
-     up:{key:"อุดมสมบูรณ์ อ่อนโยน",love:"ความรักเบ่งบาน อบอุ่น",work:"งานราบรื่น มีคนสนับสนุน",heart:"ดูแลตัวเองอย่างอ่อนโยน",adv:"เปิดรับความรักและความสวยงาม"},
-     rev:{key:"ละเลยตัวเอง พึ่งพามาก",love:"อย่าลืมรักตัวเองด้วย",work:"ดูแลสมดุลชีวิต",heart:"เติมพลังให้ตัวเองบ้าง",adv:"กลับมาใส่ใจตัวเอง"}},
-    {ico:"🏛️",n:"The Emperor จักรพรรดิ",
-     up:{key:"มั่นคง มีระเบียบ ผู้นำ",love:"ความสัมพันธ์มั่นคง จริงจัง",work:"วางแผนดี ควบคุมได้",heart:"หนักแน่น มีหลักการ",adv:"มีวินัย แล้วจะสำเร็จ"},
-     rev:{key:"ดื้อ ควบคุมมากไป",love:"ยืดหยุ่นกับกันบ้าง",work:"อย่าเข้มงวดกับตัวเองเกิน",heart:"ผ่อนคลายลงบ้าง",adv:"เปิดใจรับความเห็นคนอื่น"}},
-    {ico:"📿",n:"The Hierophant นักบวช",
-     up:{key:"ประเพณี คำแนะนำผู้ใหญ่",love:"ความสัมพันธ์จริงจัง ผูกพันระยะยาว",work:"เรียนรู้จากคนมีประสบการณ์",heart:"ยึดคุณค่าที่เชื่อ",adv:"ขอคำปรึกษาคนที่ไว้ใจ"},
-     rev:{key:"ต้านกรอบ อยากเป็นตัวเอง",love:"หาแนวทางที่เป็นเราเอง",work:"กล้าคิดต่างได้",heart:"ไม่ต้องทำตามใครทุกอย่าง",adv:"เชื่อในแบบของตัวเอง"}},
-    {ico:"💕",n:"The Lovers คู่รัก",
-     up:{key:"ความรัก การเลือก ความกลมเกลียว",love:"ความรักที่ใช่ เชื่อมโยงลึกซึ้ง",work:"ทีมเวิร์กดี พันธมิตรที่ใช่",heart:"ใจตรงกับการกระทำ",adv:"เลือกด้วยหัวใจ"},
-     rev:{key:"ไม่ลงรอย ตัดสินใจยาก",love:"สื่อสารกันให้มากขึ้น",work:"เคลียร์ความเข้าใจผิด",heart:"กลับมาฟังใจตัวเอง",adv:"คุยกันตรง ๆ จะดีขึ้น"}},
-    {ico:"🛡️",n:"The Chariot ราชรถ",
-     up:{key:"มุ่งมั่น ชัยชนะ",love:"ก้าวไปข้างหน้าด้วยกัน",work:"ผลักดันจนสำเร็จ",heart:"มีเป้าหมายชัด",adv:"โฟกัสแล้วลุยเลย"},
-     rev:{key:"ไร้ทิศทาง ท้อ",love:"อย่ายอมแพ้กับความสัมพันธ์",work:"จัดลำดับใหม่ ตั้งหลัก",heart:"หาแรงใจกลับมา",adv:"ตั้งเป้าให้ชัดอีกครั้ง"}},
-    {ico:"🦁",n:"Strength พลัง",
-     up:{key:"กล้าจากภายใน อ่อนโยนแต่แกร่ง",love:"รักด้วยความเข้าใจและอดทน",work:"ผ่านอุปสรรคด้วยใจนิ่ง",heart:"เข้มแข็งอย่างอ่อนโยน",adv:"ใจเย็น ๆ แล้วหนูทำได้"},
-     rev:{key:"หมดแรง ขาดความมั่นใจ",love:"ใจดีกับตัวเองบ้าง",work:"พักก่อนแล้วค่อยสู้ใหม่",heart:"อย่ากดดันตัวเองเกิน",adv:"เติมพลังใจให้ตัวเอง"}},
-    {ico:"🏮",n:"The Hermit ฤๅษี",
-     up:{key:"ใคร่ครวญ ค้นหาคำตอบภายใน",love:"ต้องการพื้นที่ส่วนตัว",work:"ทบทวนเป้าหมายของตัวเอง",heart:"อยู่กับตัวเองอย่างสงบ",adv:"ให้เวลาตัวเองคิด"},
-     rev:{key:"โดดเดี่ยวเกินไป",love:"อย่าปิดกั้นคนที่หวังดี",work:"ขอความช่วยเหลือได้",heart:"เปิดใจให้คนรอบข้าง",adv:"อย่าอยู่คนเดียวมากไป"}},
-    {ico:"🎡",n:"Wheel of Fortune กงล้อโชค",
-     up:{key:"โชค การเปลี่ยนที่ดี",love:"จังหวะดีกำลังมา",work:"โอกาสหมุนมาหา",heart:"เปิดรับสิ่งใหม่",adv:"คว้าจังหวะดีไว้"},
-     rev:{key:"ดวงไม่เข้า ต้องอดทน",love:"รอจังหวะที่เหมาะกว่านี้",work:"อุปสรรคชั่วคราว เดี๋ยวผ่านไป",heart:"อย่าเพิ่งท้อ",adv:"อดทนไว้ เดี๋ยวก็หมุนกลับ"}},
-    {ico:"⚖️",n:"Justice ความยุติธรรม",
-     up:{key:"สมดุล ความจริง ผลของการกระทำ",love:"ความสัมพันธ์ที่แฟร์ต่อกัน",work:"ตัดสินใจอย่างเป็นธรรม",heart:"ซื่อสัตย์กับตัวเอง",adv:"ทำสิ่งที่ถูกต้อง"},
-     rev:{key:"ไม่ยุติธรรม เลี่ยงความจริง",love:"เคลียร์ให้ตรงไปตรงมา",work:"รับผิดชอบผลที่ตามมา",heart:"ยอมรับความจริง",adv:"อย่าโทษตัวเองเกินไป"}},
-    {ico:"🙃",n:"The Hanged Man ผู้ถูกแขวน",
-     up:{key:"มองต่างมุม ปล่อยวาง รอคอย",love:"ลองเข้าใจอีกฝ่ายในมุมใหม่",work:"หยุดพักเพื่อเห็นภาพชัดขึ้น",heart:"ยอมปล่อยสิ่งที่คุมไม่ได้",adv:"บางเรื่องแค่รอ ก็ดีขึ้น"},
-     rev:{key:"ฝืน ติดอยู่กับที่",love:"อย่ายื้อสิ่งที่ควรปล่อย",work:"ตัดสินใจสักที",heart:"ปล่อยวางบ้างนะ",adv:"อย่าฝืนสิ่งที่เปลี่ยนไม่ได้"}},
-    {ico:"🦋",n:"Death การเปลี่ยนแปลง",
-     up:{key:"จบเพื่อเริ่มใหม่ เปลี่ยนผ่าน",love:"ความสัมพันธ์เข้าสู่บทใหม่",work:"ปิดฉากเก่า เปิดโอกาสใหม่",heart:"ปล่อยสิ่งเก่าที่ไม่ใช่",adv:"ยอมรับการเปลี่ยนแปลง แล้วจะดีขึ้น"},
-     rev:{key:"กลัวเปลี่ยน ยึดติด",love:"กล้าปล่อยสิ่งที่ทำร้ายใจ",work:"อย่ากลัวที่จะเริ่มใหม่",heart:"การเปลี่ยนแปลงไม่ได้แย่เสมอ",adv:"ค่อย ๆ ก้าวผ่านไปนะ"}},
-    {ico:"🕊️",n:"Temperance ความพอดี",
-     up:{key:"สมดุล อดทน ผสมผสาน",love:"ความสัมพันธ์ที่ประนีประนอมกันได้",work:"ค่อย ๆ ทำอย่างมีจังหวะ",heart:"ใจสงบ สมดุล",adv:"ทางสายกลางคือคำตอบ"},
-     rev:{key:"เสียสมดุล ใจร้อน",love:"อย่าสุดโต่งกับความรู้สึก",work:"อย่าเร่งเกินไป",heart:"หาสมดุลกลับมา",adv:"ใจเย็น ๆ ค่อยเป็นค่อยไป"}},
-    {ico:"😈",n:"The Devil พันธนาการ",
-     up:{key:"สิ่งยึดติด ความหลง",love:"ระวังความสัมพันธ์ที่ทำให้อึดอัด",work:"อย่าให้เงิน/อำนาจครอบงำ",heart:"รู้ทันสิ่งที่ผูกมัดใจ",adv:"ปลดสิ่งที่ฉุดรั้งหนูไว้"},
-     rev:{key:"ปลดปล่อย เป็นอิสระ",love:"หลุดจากสิ่งไม่ดีได้แล้ว",work:"ตัดสิ่งที่ถ่วงออกไป",heart:"ทวงอิสระคืนมา",adv:"หนูมีสิทธิ์เลือกทางที่ดีกว่า"}},
-    {ico:"🗼",n:"The Tower หอคอย",
-     up:{key:"เปลี่ยนกะทันหัน ความจริงเปิดเผย",love:"เรื่องที่ซ่อนอาจปรากฏ ตั้งสติ",work:"แผนอาจสะดุด ปรับตัวไว",heart:"ยอมรับความจริงที่เกิดขึ้น",adv:"สิ่งที่พังคือโอกาสสร้างใหม่"},
-     rev:{key:"เลี่ยงหายนะได้ ค่อยคลี่คลาย",love:"วิกฤตกำลังผ่านไป",work:"ปัญหาเริ่มคลี่คลาย",heart:"ใจเริ่มสงบขึ้น",adv:"ผ่านจุดที่ยากที่สุดมาแล้ว"}},
-    {ico:"⭐",n:"The Star ดาว",
-     up:{key:"ความหวัง แรงบันดาลใจ เยียวยา",love:"ความรักที่อ่อนโยนและมีความหวัง",work:"ฝันที่วางไว้กำลังเป็นจริง",heart:"ใจได้รับการเยียวยา",adv:"มีความหวังไว้เสมอนะ"},
-     rev:{key:"หมดหวัง ท้อแท้",love:"อย่าเพิ่งหมดศรัทธาในความรัก",work:"กลับมาหาแรงบันดาลใจ",heart:"ให้กำลังใจตัวเองหน่อย",adv:"แสงสว่างยังรออยู่ข้างหน้า"}},
-    {ico:"🌙",n:"The Moon พระจันทร์",
-     up:{key:"ลางสังหรณ์ ไม่แน่นอน",love:"มีบางอย่างยังไม่ชัด ฟังใจตัวเอง",work:"ข้อมูลยังคลุมเครือ ระวังหน่อย",heart:"อารมณ์อ่อนไหว ดูแลใจ",adv:"อย่าเพิ่งตัดสินจากภาพที่เห็น"},
-     rev:{key:"ความจริงเริ่มกระจ่าง",love:"ความเข้าใจผิดเริ่มหาย",work:"มองเห็นทางชัดขึ้น",heart:"ความกลัวเริ่มจางลง",adv:"หมอกกำลังจาง ทุกอย่างจะชัดขึ้น"}},
-    {ico:"☀️",n:"The Sun พระอาทิตย์",
-     up:{key:"ความสุข ความสำเร็จ พลังบวก",love:"ความรักสดใส อบอุ่น",work:"สำเร็จ สดชื่น มีความสุข",heart:"ใจเบิกบาน",adv:"วันนี้เป็นวันที่ดีของหนู"},
-     rev:{key:"ความสุขถูกบังชั่วคราว",love:"เดี๋ยวรอยยิ้มก็กลับมา",work:"มองข้อดีที่มีอยู่",heart:"หาความสุขเล็ก ๆ รอบตัว",adv:"เมฆบังแดดแค่ชั่วคราวนะ"}},
-    {ico:"🎺",n:"Judgement การเริ่มใหม่",
-     up:{key:"ตื่นรู้ ให้อภัย เริ่มบทใหม่",love:"โอกาสคืนดี/เริ่มใหม่",work:"ผลตอบแทนจากที่ทุ่มเท",heart:"ปลดปล่อยอดีต ให้อภัยตัวเอง",adv:"ถึงเวลาก้าวสู่บทใหม่"},
-     rev:{key:"ตัดสินตัวเองแรงไป",love:"ให้อภัยกันและกัน",work:"อย่ากลัวที่จะตัดสินใจ",heart:"เลิกโทษตัวเองได้แล้ว",adv:"ปล่อยอดีตไป แล้วเดินต่อ"}},
-    {ico:"🌍",n:"The World ความสมบูรณ์",
-     up:{key:"ครบวงจร ความสำเร็จ",love:"ความสัมพันธ์ที่เติมเต็ม",work:"บรรลุเป้าหมาย ปิดจ็อบสวย",heart:"รู้สึกครบถ้วน พอใจ",adv:"หนูมาไกลและทำได้ดีมาก"},
-     rev:{key:"ยังไม่จบดี ขาดบางชิ้น",love:"อีกนิดเดียวก็เต็มแล้ว",work:"สานงานที่ค้างให้เสร็จ",heart:"ให้เวลาตัวเองอีกหน่อย",adv:"ใกล้ถึงเส้นชัยแล้ว สู้ต่อนะ"}}
-  ],
-  overall: [
-    "ดวงโดยรวมสดใส ทำอะไรก็ลื่นไหล ✦",
-    "วันนี้เหมาะกับการพักและดูแลตัวเอง อย่าหักโหมนะ",
-    "มีจังหวะดี ๆ เข้ามา เจอโอกาสให้คว้าไว้เลย",
-    "ใจเย็น ๆ ไว้ วันนี้อาจมีเรื่องให้อดทนนิดหน่อย แต่ผ่านไปได้แน่",
-    "พลังบวกกำลังมาหา ยิ้มไว้แล้วสิ่งดี ๆ จะตามมา 🌟",
-    "วันนี้เป็นวันของหนูเลย มั่นใจเข้าไว้!",
-    "ทำอะไรด้วยใจเย็น ๆ จะราบรื่นเป็นพิเศษวันนี้"
-  ],
-  love: [
-    "ความรักวันนี้หวานเจี๊ยบ มีคนใส่ใจหนูอยู่นะ 💖",
-    "เปิดใจอีกนิด แล้วจะเจอความอบอุ่นที่รออยู่ ✦",
-    "คนสำคัญกำลังคิดถึงหนูอยู่เลยนะ",
-    "วันนี้เหมาะกับการบอกความรู้สึกดี ๆ ให้กัน",
-    "รอยยิ้มของหนูคือเสน่ห์วันนี้ ใครเห็นก็ปลื้ม 🌸",
-    "ความสัมพันธ์กำลังค่อย ๆ อบอุ่นขึ้นนะ ใจเย็น ๆ"
-  ],
-  colors: [
-    {n:"ชมพูโรส",c:"#f0a6c0"},{n:"ทองมงคล",c:"#f4d58d"},{n:"ม่วงมู",c:"#b39ddb"},
-    {n:"ฟ้าใส",c:"#8fc7e8"},{n:"ขาวมุก",c:"#f2f0fa"},{n:"เขียวมิ้นต์",c:"#a5e1c4"},{n:"พีชอ่อน",c:"#f5c1a5"}
-  ],
-  wishReplies: [
-    "จักรวาลรับคำขอของหนูแล้วนะ ✦ ขอให้เป็นจริง เชื่อมั่นไว้!",
-    "ส่งพลังขึ้นดาวให้แล้ว 🌟 สิ่งดี ๆ กำลังเดินทางมาหาหนู",
-    "ขอพรแล้วอย่าลืมลงมือทำด้วยนะ ✦ จักรวาลชอบคนที่ตั้งใจ",
-    "พี่ขอพรเดียวกับหนูด้วยเลย ✦ เดี๋ยวเราลุ้นให้เป็นจริงด้วยกันนะ"
-  ],
-  zodiac: {
-    intl: { // ระบบสากล (ตามวันเกิด: พี่เบล 31 ก.ค. = สิงห์, หนูกิ๊บ 10 ม.ค. = มังกร)
-      bel:{sym:"♌", name:"ราศีสิงห์"}, gib:{sym:"♑", name:"ราศีมังกร"},
-      percent:"90%",
-      msg:"สิงห์ (พี่เบล) ที่อบอุ่นและจริงใจ เจอกับ มังกร (หนูกิ๊บ) ที่มั่นคงและน่าเชื่อถือ เป็นคู่ที่ค่อย ๆ สร้างความสัมพันธ์อย่างมั่นคง ยิ่งรู้จักยิ่งผูกพัน ✦ ดูแลกันดี ๆ ไปได้ไกลแน่นอน",
-      note:"* ระบบสากล (Western) — มังกร 22 ธ.ค.–19 ม.ค. / สิงห์ 23 ก.ค.–22 ส.ค."
-    },
-    thai: { // ระบบไทย (ราศีเลื่อน: พี่เบล 31 ก.ค. = กรกฎ, หนูกิ๊บ 10 ม.ค. = ธนู)
-      bel:{sym:"♋", name:"ราศีกรกฎ"}, gib:{sym:"♐", name:"ราศีธนู"},
-      percent:"93%",
-      msg:"กรกฎ (พี่เบล) ที่อ่อนโยน ใส่ใจ รักและดูแลคนของตัวเอง เจอกับ ธนู (หนูกิ๊บ) ที่สดใส ร่าเริง และมองโลกในแง่ดี — กรกฎคอยเป็นบ้านอุ่น ๆ ให้ธนูที่ชอบผจญภัย เติมเต็มกันได้ดีมาก ✦ ยิ่งอยู่ด้วยกันยิ่งสนุกและอบอุ่น",
-      note:"* ระบบไทย (ราศีจักรราศีแบบสายนะ) — ธนู ~15 ธ.ค.–13 ม.ค. / กรกฎ ~15 ก.ค.–16 ส.ค."
-    }
-  }
-};
-
 const CORNERS=[
-  {id:"cards",   em:"🃏", name:"ไพ่ทาโรต์",     desc:"22 ใบ · ตั้งตรง/หัวกลับ"},
-  {id:"fortune", em:"🔮", name:"ดูดวงวันนี้",   desc:"รวม/รัก/สี/เลข"},
-  {id:"manifest",em:"🙏", name:"ขอพรกับจักรวาล", desc:"ส่งคำขอขึ้นฟ้า"},
-  {id:"zodiac",  em:"💫", name:"ดวงของเรา",     desc:"กรกฎ × มังกร"}
+  {id:"cards",  em:"🃏", name:"ไพ่ทาโรต์",   desc:"22 ใบ ครบทุกด้าน"},
+  {id:"siamsi", em:"🥠", name:"เซียมซี",     desc:"เขย่าเสี่ยงทาย"},
+  {id:"daily",  em:"🔮", name:"ดูดวงวันนี้",  desc:"งาน/เงิน/รัก/สุขภาพ"},
+  {id:"numero", em:"🔢", name:"เลขศาสตร์",    desc:"จากวันเกิด"},
+  {id:"zodiac", em:"💫", name:"ดวงของเรา",   desc:"กรกฎ/สิงห์ × ธนู/มังกร"}
+];
+const posLabels=["อดีต","ปัจจุบัน","อนาคต"];
+const sweetNotes=[
+  "ไม่ว่าไพ่จะบอกอะไร พี่ก็อยู่ข้างหนูเสมอนะ ✦",
+  "ทำนายเป็นแค่แนวทาง คนที่เลือกทางเดินคือหนูเอง พี่เชื่อในตัวหนู 🤍",
+  "ถ้าวันนี้ดวงดีก็ดีใจด้วย ถ้าไม่ดีก็มีพี่คอยเป็นกำลังใจนะ ✦",
+  "ขอให้ดวงนำแต่สิ่งดี ๆ มาให้หนูนะ 🌙"
 ];
 
-/* ---------- ท้องฟ้าพื้นหลัง ---------- */
+/* ---- ไพ่ทาโรต์ 22 ใบ (ครบทุกด้าน) ---- */
+const TAROT=[
+ {ico:"🃏",n:"The Fool ผู้เริ่มต้น",
+  up:{key:"เริ่มต้นใหม่ ไร้กังวล",love:"กล้าเปิดใจครั้งใหม่",work:"ลองสิ่งที่ไม่เคยทำ",money:"กล้าลงทุนเล็ก ๆ",heart:"ปล่อยวาง สนุกกับวันนี้",adv:"กล้าก้าวไป อย่ากลัวเกินไป"},
+  rev:{key:"หุนหัน ไม่รอบคอบ",love:"อย่ารีบร้อนเกินไป",work:"คิดให้ดีก่อนตัดสินใจ",money:"ระวังใช้จ่ายเกินตัว",heart:"ระวังความประมาท",adv:"มีสตินิดนึงก่อนลงมือ"}},
+ {ico:"🎩",n:"The Magician นักมายากล",
+  up:{key:"มีพลัง ทำได้ทุกอย่าง",love:"เสน่ห์แรง ดึงดูดคน",work:"ใช้ความสามารถได้เต็มที่",money:"หารายได้ทางใหม่ได้",heart:"มั่นใจในตัวเอง",adv:"ลงมือเลย หนูมีของ"},
+  rev:{key:"ลังเล ไม่เชื่อมั่น",love:"สื่อสารให้ชัด",work:"ขาดโฟกัส",money:"ระวังถูกหลอก",heart:"อย่าดูถูกตัวเอง",adv:"เชื่อในศักยภาพตัวเอง"}},
+ {ico:"🔮",n:"The High Priestess",
+  up:{key:"สัญชาตญาณ ความลับ",love:"มีบางอย่างซ่อนอยู่ ฟังใจ",work:"รอจังหวะ สังเกตให้ดี",money:"ยังไม่ควรรีบตัดสินใจเงิน",heart:"เชื่อลางสังหรณ์",adv:"เงียบฟังเสียงในใจ"},
+  rev:{key:"เมินสัญชาตญาณ สับสน",love:"อย่าเก็บความรู้สึกไว้คนเดียว",work:"ข้อมูลไม่ครบ",money:"ตรวจให้ดีก่อนจ่าย",heart:"ฟังใจตัวเองมากขึ้น",adv:"อย่าปิดกั้นความรู้สึก"}},
+ {ico:"👑",n:"The Empress จักรพรรดินี",
+  up:{key:"อุดมสมบูรณ์ อ่อนโยน",love:"ความรักเบ่งบาน",work:"งานราบรื่น มีคนช่วย",money:"เงินไหลเข้าดี",heart:"ดูแลตัวเองอ่อนโยน",adv:"เปิดรับสิ่งสวยงาม"},
+  rev:{key:"ละเลยตัวเอง",love:"อย่าลืมรักตัวเอง",work:"ดูแลสมดุลชีวิต",money:"ระวังใช้จ่ายฟุ่มเฟือย",heart:"เติมพลังให้ตัวเอง",adv:"กลับมาใส่ใจตัวเอง"}},
+ {ico:"🏛️",n:"The Emperor จักรพรรดิ",
+  up:{key:"มั่นคง มีระเบียบ",love:"ความสัมพันธ์จริงจัง",work:"วางแผนดี ควบคุมได้",money:"การเงินเป็นระบบ มั่นคง",heart:"หนักแน่น มีหลักการ",adv:"มีวินัยแล้วจะสำเร็จ"},
+  rev:{key:"ดื้อ ควบคุมมากไป",love:"ยืดหยุ่นกันบ้าง",work:"อย่าเข้มงวดเกิน",money:"อย่ายึดติดแผนเดิมเกิน",heart:"ผ่อนคลายลงบ้าง",adv:"เปิดใจฟังคนอื่น"}},
+ {ico:"📿",n:"The Hierophant",
+  up:{key:"คำแนะนำผู้ใหญ่",love:"ผูกพันระยะยาว",work:"เรียนรู้จากผู้มีประสบการณ์",money:"ลงทุนแบบมั่นคงปลอดภัย",heart:"ยึดคุณค่าที่เชื่อ",adv:"ขอคำปรึกษาคนที่ไว้ใจ"},
+  rev:{key:"อยากเป็นตัวเอง",love:"หาแนวทางที่เป็นเรา",work:"กล้าคิดต่างได้",money:"ลองวิธีใหม่ได้ แต่รอบคอบ",heart:"ไม่ต้องตามใครทุกอย่าง",adv:"เชื่อในแบบของตัวเอง"}},
+ {ico:"💕",n:"The Lovers คู่รัก",
+  up:{key:"ความรัก การเลือก",love:"ความรักที่ใช่ เชื่อมโยงลึก",work:"ทีมเวิร์กดี",money:"ตัดสินใจเงินร่วมกันได้ดี",heart:"ใจตรงกับการกระทำ",adv:"เลือกด้วยหัวใจ"},
+  rev:{key:"ไม่ลงรอย ตัดสินใจยาก",love:"สื่อสารให้มากขึ้น",work:"เคลียร์ความเข้าใจผิด",money:"ระวังขัดแย้งเรื่องเงิน",heart:"กลับมาฟังใจตัวเอง",adv:"คุยกันตรง ๆ จะดีขึ้น"}},
+ {ico:"🛡️",n:"The Chariot ราชรถ",
+  up:{key:"มุ่งมั่น ชัยชนะ",love:"ก้าวไปด้วยกัน",work:"ผลักดันจนสำเร็จ",money:"รายได้พุ่งจากความพยายาม",heart:"มีเป้าหมายชัด",adv:"โฟกัสแล้วลุยเลย"},
+  rev:{key:"ไร้ทิศทาง ท้อ",love:"อย่ายอมแพ้",work:"จัดลำดับใหม่",money:"คุมค่าใช้จ่ายให้อยู่",heart:"หาแรงใจกลับมา",adv:"ตั้งเป้าให้ชัดอีกครั้ง"}},
+ {ico:"🦁",n:"Strength พลัง",
+  up:{key:"กล้าจากภายใน",love:"รักด้วยความเข้าใจ อดทน",work:"ผ่านอุปสรรคด้วยใจนิ่ง",money:"อดออมได้ดี มั่นคงขึ้น",heart:"เข้มแข็งอย่างอ่อนโยน",adv:"ใจเย็น ๆ แล้วหนูทำได้"},
+  rev:{key:"หมดแรง ไม่มั่นใจ",love:"ใจดีกับตัวเองบ้าง",work:"พักก่อนค่อยสู้ใหม่",money:"อย่าเพิ่งเสี่ยงตอนนี้",heart:"อย่ากดดันตัวเองเกิน",adv:"เติมพลังใจให้ตัวเอง"}},
+ {ico:"🏮",n:"The Hermit ฤๅษี",
+  up:{key:"ใคร่ครวญ หาคำตอบภายใน",love:"ต้องการพื้นที่ส่วนตัว",work:"ทบทวนเป้าหมาย",money:"วางแผนการเงินระยะยาว",heart:"อยู่กับตัวเองอย่างสงบ",adv:"ให้เวลาตัวเองคิด"},
+  rev:{key:"โดดเดี่ยวเกินไป",love:"อย่าปิดกั้นคนหวังดี",work:"ขอความช่วยเหลือได้",money:"ปรึกษาคนรู้เรื่องเงิน",heart:"เปิดใจให้คนรอบข้าง",adv:"อย่าอยู่คนเดียวมากไป"}},
+ {ico:"🎡",n:"Wheel of Fortune",
+  up:{key:"โชค การเปลี่ยนที่ดี",love:"จังหวะดีกำลังมา",work:"โอกาสหมุนมาหา",money:"โชคลาภเรื่องเงินเข้ามา",heart:"เปิดรับสิ่งใหม่",adv:"คว้าจังหวะดีไว้"},
+  rev:{key:"ดวงยังไม่เข้า",love:"รอจังหวะที่เหมาะกว่า",work:"อุปสรรคชั่วคราว",money:"ชะลอการลงทุนไว้ก่อน",heart:"อย่าเพิ่งท้อ",adv:"อดทนไว้ เดี๋ยวหมุนกลับ"}},
+ {ico:"⚖️",n:"Justice ความยุติธรรม",
+  up:{key:"สมดุล ความจริง",love:"ความสัมพันธ์ที่แฟร์",work:"ตัดสินใจอย่างเป็นธรรม",money:"บัญชีชัดเจน เคลียร์หนี้ได้",heart:"ซื่อสัตย์กับตัวเอง",adv:"ทำสิ่งที่ถูกต้อง"},
+  rev:{key:"ไม่ยุติธรรม เลี่ยงความจริง",love:"เคลียร์ให้ตรงไปตรงมา",work:"รับผิดชอบผลที่ตามมา",money:"ระวังสัญญา/เอกสารเงิน",heart:"ยอมรับความจริง",adv:"อย่าโทษตัวเองเกินไป"}},
+ {ico:"🙃",n:"The Hanged Man",
+  up:{key:"มองต่างมุม ปล่อยวาง",love:"ลองเข้าใจอีกฝ่ายมุมใหม่",work:"หยุดพักเพื่อเห็นภาพชัด",money:"ยังไม่ใช่เวลาลงทุน รอก่อน",heart:"ปล่อยสิ่งที่คุมไม่ได้",adv:"บางเรื่องแค่รอ ก็ดีขึ้น"},
+  rev:{key:"ฝืน ติดอยู่กับที่",love:"อย่ายื้อสิ่งที่ควรปล่อย",work:"ตัดสินใจสักที",money:"เลิกลังเลเรื่องเงิน",heart:"ปล่อยวางบ้างนะ",adv:"อย่าฝืนสิ่งที่เปลี่ยนไม่ได้"}},
+ {ico:"🦋",n:"Death การเปลี่ยนแปลง",
+  up:{key:"จบเพื่อเริ่มใหม่",love:"ความสัมพันธ์เข้าสู่บทใหม่",work:"ปิดฉากเก่า เปิดโอกาสใหม่",money:"เปลี่ยนวิธีจัดการเงินใหม่",heart:"ปล่อยสิ่งเก่าที่ไม่ใช่",adv:"ยอมรับการเปลี่ยนแปลง"},
+  rev:{key:"กลัวเปลี่ยน ยึดติด",love:"กล้าปล่อยสิ่งที่ทำร้ายใจ",work:"อย่ากลัวเริ่มใหม่",money:"อย่ายึดของเดิมที่ไม่เวิร์ก",heart:"การเปลี่ยนไม่ได้แย่เสมอ",adv:"ค่อย ๆ ก้าวผ่านไปนะ"}},
+ {ico:"🕊️",n:"Temperance ความพอดี",
+  up:{key:"สมดุล อดทน",love:"ประนีประนอมกันได้",work:"ค่อย ๆ ทำอย่างมีจังหวะ",money:"บริหารเงินสมดุล",heart:"ใจสงบ สมดุล",adv:"ทางสายกลางคือคำตอบ"},
+  rev:{key:"เสียสมดุล ใจร้อน",love:"อย่าสุดโต่ง",work:"อย่าเร่งเกินไป",money:"อย่าใช้แบบสวิงมาก",heart:"หาสมดุลกลับมา",adv:"ใจเย็น ค่อยเป็นค่อยไป"}},
+ {ico:"😈",n:"The Devil พันธนาการ",
+  up:{key:"สิ่งยึดติด ความหลง",love:"ระวังความสัมพันธ์ที่อึดอัด",work:"อย่าให้อำนาจครอบงำ",money:"ระวังหนี้/สิ่งล่อใจซื้อ",heart:"รู้ทันสิ่งที่ผูกมัดใจ",adv:"ปลดสิ่งที่ฉุดรั้งไว้"},
+  rev:{key:"ปลดปล่อย เป็นอิสระ",love:"หลุดจากสิ่งไม่ดีได้แล้ว",work:"ตัดสิ่งที่ถ่วงออกไป",money:"เริ่มปลดหนี้ได้",heart:"ทวงอิสระคืนมา",adv:"หนูเลือกทางที่ดีกว่าได้"}},
+ {ico:"🗼",n:"The Tower หอคอย",
+  up:{key:"เปลี่ยนกะทันหัน",love:"เรื่องซ่อนอาจปรากฏ ตั้งสติ",work:"แผนอาจสะดุด ปรับตัวไว",money:"ระวังรายจ่ายฉุกเฉิน",heart:"ยอมรับความจริงที่เกิด",adv:"ที่พังคือโอกาสสร้างใหม่"},
+  rev:{key:"เลี่ยงหายนะได้",love:"วิกฤตกำลังผ่านไป",work:"ปัญหาเริ่มคลี่คลาย",money:"การเงินเริ่มนิ่งขึ้น",heart:"ใจเริ่มสงบขึ้น",adv:"ผ่านจุดยากที่สุดมาแล้ว"}},
+ {ico:"⭐",n:"The Star ดาว",
+  up:{key:"ความหวัง เยียวยา",love:"ความรักอ่อนโยน มีความหวัง",work:"ฝันที่วางไว้กำลังเป็นจริง",money:"การเงินเริ่มฟื้น สดใส",heart:"ใจได้รับการเยียวยา",adv:"มีความหวังไว้เสมอนะ"},
+  rev:{key:"หมดหวัง ท้อแท้",love:"อย่าเพิ่งหมดศรัทธา",work:"หาแรงบันดาลใจกลับมา",money:"อย่าเพิ่งท้อเรื่องเงิน",heart:"ให้กำลังใจตัวเองหน่อย",adv:"แสงสว่างยังรออยู่ข้างหน้า"}},
+ {ico:"🌙",n:"The Moon พระจันทร์",
+  up:{key:"ลางสังหรณ์ ไม่แน่นอน",love:"บางอย่างยังไม่ชัด ฟังใจ",work:"ข้อมูลคลุมเครือ ระวัง",money:"ตรวจให้ดีก่อนตัดสินใจเงิน",heart:"อารมณ์อ่อนไหว ดูแลใจ",adv:"อย่าตัดสินจากภาพที่เห็น"},
+  rev:{key:"ความจริงเริ่มกระจ่าง",love:"ความเข้าใจผิดเริ่มหาย",work:"เห็นทางชัดขึ้น",money:"ความไม่แน่นอนเริ่มคลาย",heart:"ความกลัวเริ่มจาง",adv:"หมอกกำลังจาง จะชัดขึ้น"}},
+ {ico:"☀️",n:"The Sun พระอาทิตย์",
+  up:{key:"ความสุข ความสำเร็จ",love:"ความรักสดใส อบอุ่น",work:"สำเร็จ สดชื่น",money:"การเงินสดใส มีโชค",heart:"ใจเบิกบาน",adv:"วันนี้เป็นวันที่ดีของหนู"},
+  rev:{key:"สุขถูกบังชั่วคราว",love:"เดี๋ยวรอยยิ้มก็กลับมา",work:"มองข้อดีที่มีอยู่",money:"อย่ากังวลเรื่องเงินเกิน",heart:"หาความสุขเล็ก ๆ รอบตัว",adv:"เมฆบังแดดแค่ชั่วคราว"}},
+ {ico:"🎺",n:"Judgement การเริ่มใหม่",
+  up:{key:"ตื่นรู้ ให้อภัย",love:"โอกาสคืนดี/เริ่มใหม่",work:"ผลตอบแทนจากที่ทุ่มเท",money:"ได้เงินคืน/ปลดภาระ",heart:"ปลดปล่อยอดีต",adv:"ถึงเวลาก้าวสู่บทใหม่"},
+  rev:{key:"ตัดสินตัวเองแรงไป",love:"ให้อภัยกันและกัน",work:"อย่ากลัวตัดสินใจ",money:"ทบทวนภาระการเงิน",heart:"เลิกโทษตัวเองได้แล้ว",adv:"ปล่อยอดีตไป แล้วเดินต่อ"}},
+ {ico:"🌍",n:"The World ความสมบูรณ์",
+  up:{key:"ครบวงจร สำเร็จ",love:"ความสัมพันธ์ที่เติมเต็ม",work:"บรรลุเป้าหมาย",money:"การเงินมั่นคง ครบถ้วน",heart:"รู้สึกพอใจ ครบถ้วน",adv:"หนูมาไกลและทำได้ดีมาก"},
+  rev:{key:"ยังไม่จบดี ขาดบางชิ้น",love:"อีกนิดเดียวก็เต็มแล้ว",work:"สานงานค้างให้เสร็จ",money:"อีกนิดก็ถึงเป้าเงิน",heart:"ให้เวลาตัวเองอีกหน่อย",adv:"ใกล้ถึงเส้นชัยแล้ว สู้ต่อ"}}
+];
+
+/* ---- เซียมซี (แต่งขึ้นเอง) ---- */
+const SIAMSI=[
+ {no:1, lv:"มหาโชค", work:"งานรุ่ง มีคนสนับสนุน",money:"เงินทองไหลมา",love:"รักสมหวัง",health:"แข็งแรงดี",adv:"ลงมือเลย จังหวะกำลังดี"},
+ {no:5, lv:"ดีมาก", work:"ความพยายามเห็นผล",money:"รายรับดีขึ้น",love:"คนรู้ใจใส่ใจหนู",health:"สดชื่น",adv:"ทำต่อไป อย่าหยุด"},
+ {no:8, lv:"ดี", work:"ราบรื่น ค่อยเป็นค่อยไป",money:"พอใช้ มีเก็บ",love:"อบอุ่นขึ้นเรื่อย ๆ",health:"ปกติดี",adv:"ใจเย็น ๆ แล้วจะดี"},
+ {no:12,lv:"ดี", work:"มีโอกาสใหม่เข้ามา",money:"มีลาภเล็ก ๆ",love:"ได้คุยกันเข้าใจมากขึ้น",health:"พักผ่อนให้พอ",adv:"เปิดใจรับสิ่งใหม่"},
+ {no:16,lv:"ปานกลาง", work:"ต้องอดทนอีกนิด",money:"ใช้จ่ายอย่างระวัง",love:"อย่าใจร้อน",health:"อย่าหักโหม",adv:"ค่อย ๆ ทำ เดี๋ยวผ่านไป"},
+ {no:19,lv:"ปานกลาง", work:"งานมีติดขัดบ้าง",money:"เก็บไว้ก่อน อย่าเพิ่งลงทุน",love:"สื่อสารกันให้มากขึ้น",health:"ดูแลใจตัวเอง",adv:"มีสติ แล้วจะผ่านไปได้"},
+ {no:23,lv:"ควรระวัง", work:"อย่าเพิ่งตัดสินใจใหญ่",money:"ระวังรายจ่ายไม่คาดคิด",love:"ใจเย็น อย่างอนนาน",health:"พักเยอะ ๆ",adv:"รอจังหวะที่ดีกว่านี้"},
+ {no:28,lv:"ดีมาก", work:"ผลงานเป็นที่ยอมรับ",money:"โชคเรื่องเงินดี",love:"ความสัมพันธ์ก้าวหน้า",health:"เต็มพลัง",adv:"มั่นใจได้เลย หนูทำได้"}
+];
+
+/* ---- เลขศาสตร์ (เลขชีวิต 1–9) ---- */
+const NUMERO={
+ 1:{t:"ผู้นำ มั่นใจ เป็นตัวของตัวเอง",work:"เหมาะเป็นหัวหน้า/ริเริ่มเอง",money:"หาเงินเก่ง แต่ควรวางแผนเก็บ",love:"รักแรง จริงจัง",adv:"เชื่อมั่นในตัวเอง แต่ฟังคนอื่นบ้าง"},
+ 2:{t:"อ่อนโยน ประนีประนอม เข้าใจคน",work:"เก่งงานทีม ประสานงาน",money:"เก็บเงินได้ดีเมื่อมีเป้าหมาย",love:"ใส่ใจ อ่อนหวาน",adv:"อย่าลืมดูแลใจตัวเองด้วย"},
+ 3:{t:"สดใส ครีเอทีฟ ช่างพูด",work:"เหมาะงานสร้างสรรค์/สื่อสาร",money:"เงินเข้าง่ายออกง่าย ควรมีวินัย",love:"มีเสน่ห์ น่ารัก",adv:"โฟกัสสิ่งเดียวให้จบ"},
+ 4:{t:"มั่นคง ขยัน มีระเบียบ",work:"งานที่ต้องอาศัยความละเอียด",money:"เก็บเงินเก่ง มั่นคง",love:"จริงใจ ซื่อสัตย์",adv:"ผ่อนคลายบ้าง อย่าเครียดเกิน"},
+ 5:{t:"รักอิสระ ชอบผจญภัย",work:"เหมาะงานยืดหยุ่น/เดินทาง",money:"รายได้หลายทาง ควรระวังใช้เพลิน",love:"สนุก ตื่นเต้น",adv:"มีอิสระได้ แต่อย่าลืมความรับผิดชอบ"},
+ 6:{t:"อบอุ่น รักครอบครัว ดูแลคน",work:"งานบริการ/ดูแลคนอื่น",money:"ใช้เพื่อคนที่รัก ควรมีเผื่อตัวเอง",love:"รักลึกซึ้ง ทุ่มเท",adv:"รักคนอื่นแล้วอย่าลืมรักตัวเอง"},
+ 7:{t:"ลึกซึ้ง ช่างคิด มีสัญชาตญาณ",work:"งานวิเคราะห์/เชี่ยวชาญเฉพาะทาง",money:"ระวังคิดมากจนพลาดโอกาส",love:"ต้องการความเข้าใจ",adv:"เปิดใจแบ่งปันความรู้สึกบ้าง"},
+ 8:{t:"ทะเยอทะยาน เก่งบริหาร",work:"เหมาะงานบริหาร/ธุรกิจ",money:"ดวงการเงินดี รวยได้จากความมุ่งมั่น",love:"จริงจัง ปกป้องคนรัก",adv:"สมดุลงานกับความสัมพันธ์"},
+ 9:{t:"ใจกว้าง เมตตา มองภาพใหญ่",work:"งานช่วยเหลือคน/สังคม",money:"ให้เยอะ ควรวางแผนเผื่ออนาคต",love:"ให้อภัย รักไม่มีเงื่อนไข",adv:"ดูแลตัวเองให้มากเท่าที่ดูแลคนอื่น"}
+};
+
+/* ---- ดูดวงวันนี้ (สุ่มจากวันที่ คงที่ทั้งวัน) ---- */
+const DAILY={
+ overall:["วันนี้โดยรวมสดใส ทำอะไรก็ลื่นไหล ✦","เหมาะกับการพักและดูแลตัวเอง","มีจังหวะดี ๆ เข้ามา คว้าไว้เลย","อาจมีเรื่องให้อดทนนิดหน่อย แต่ผ่านได้แน่","พลังบวกกำลังมาหา ยิ้มไว้ 🌟","วันนี้เป็นวันของหนูเลย มั่นใจเข้าไว้!","ทำอะไรใจเย็น ๆ จะราบรื่นเป็นพิเศษ"],
+ work:["งานเดินหน้าดี มีคนช่วย","โฟกัสงานเดียวให้จบ จะได้ผล","มีไอเดียใหม่ ลองเสนอดู","อดทนอีกนิด ใกล้สำเร็จแล้ว","ระวังงานด่วนแทรก จัดลำดับดี ๆ"],
+ money:["การเงินคล่องตัว มีลาภเล็ก ๆ","เหมาะกับการวางแผนเก็บเงิน","ระวังใช้จ่ายเพลิน","มีรายรับทางใหม่เข้ามา","ยังไม่ควรลงทุนใหญ่ รอก่อน"],
+ love:["ความรักหวาน มีคนใส่ใจหนู 💖","เปิดใจอีกนิด จะเจอความอบอุ่น","คนสำคัญกำลังคิดถึงหนู ✦","เหมาะกับการบอกความรู้สึกดี ๆ","รอยยิ้มของหนูคือเสน่ห์วันนี้ 🌸"],
+ health:["ร่างกายสดชื่น พลังดี","พักผ่อนให้พอ อย่าหักโหม","ดื่มน้ำเยอะ ๆ ดูแลตัวเอง","ขยับร่างกายสักหน่อยจะสดใส","ดูแลใจ อย่าเครียดเกินไป"],
+ colors:[{n:"ชมพูโรส",c:"#f0a6c0"},{n:"ทองมงคล",c:"#f4d58d"},{n:"ม่วงมู",c:"#b39ddb"},{n:"ฟ้าใส",c:"#8fc7e8"},{n:"ขาวมุก",c:"#f2f0fa"},{n:"เขียวมิ้นต์",c:"#a5e1c4"},{n:"พีชอ่อน",c:"#f5c1a5"}]
+};
+
+/* ---- ราศี ---- */
+const ZODIAC={
+ intl:{bel:{sym:"♋",name:"ราศีกรกฎ"},gib:{sym:"♑",name:"ราศีมังกร"},percent:"90%",
+   msg:"กรกฎ (พี่เบล) ที่อ่อนโยน ใส่ใจ เจอกับ มังกร (หนูกิ๊บ) ที่มั่นคงและน่าเชื่อถือ เป็นคู่ที่ค่อย ๆ สร้างความสัมพันธ์อย่างมั่นคง ยิ่งรู้จักยิ่งผูกพัน ✦",
+   note:"* ระบบสากล — มังกร 22 ธ.ค.–19 ม.ค. / กรกฎ 22 มิ.ย.–22 ก.ค."},
+ thai:{bel:{sym:"♋",name:"ราศีกรกฎ"},gib:{sym:"♐",name:"ราศีธนู"},percent:"93%",
+   msg:"กรกฎ (พี่เบล) ที่อบอุ่น รักและดูแลคนของตัวเอง เจอกับ ธนู (หนูกิ๊บ) ที่สดใส ร่าเริง มองโลกในแง่ดี — เติมเต็มกันได้ดีมาก ยิ่งอยู่ยิ่งสนุกและอบอุ่น ✦",
+   note:"* ระบบไทย (สายนะ) — ธนู ~15 ธ.ค.–13 ม.ค. / กรกฎ ~15 ก.ค.–16 ส.ค."}
+};
+
+/* ---------- พื้นหลัง ---------- */
 const cv=document.getElementById('sky'),ctx=cv.getContext('2d');
 let W,H,DPR,stars=[],t=0,reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
 function resize(){DPR=Math.min(devicePixelRatio||1,2);W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR;
   cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';
   stars=[];const n=Math.round(innerWidth*innerHeight/3000);
-  for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,
-    r:(Math.random()*1.1+.25)*DPR,tw:Math.random()*6.28,sp:Math.random()*.02+.005,d:Math.random()*.5+.5});}
+  for(let i=0;i<n;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.1+.25)*DPR,
+    tw:Math.random()*6.28,sp:Math.random()*.02+.005,d:Math.random()*.5+.5});}
 addEventListener('resize',resize);resize();
 (function loop(){t+=reduce?0:1;ctx.clearRect(0,0,W,H);
   for(const s of stars){const tw=reduce?.7:(Math.sin(t*s.sp+s.tw)*.4+.6);
     ctx.fillStyle="rgba(230,235,255,"+(tw*s.d)+")";ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,7);ctx.fill();}
   requestAnimationFrame(loop);})();
 
-/* ---------- ตัวจัดการหน้าจอ ---------- */
+/* ---------- เมนู/หน้าจอ ---------- */
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
   document.getElementById(id).classList.add('on');
-  if(id==='fortune')renderFortune();
+  if(id==='daily')renderDaily();
   if(id==='zodiac')renderZodiac();}
 document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show('menu'));
 const grid=document.getElementById('cornerGrid');
 CORNERS.forEach(c=>{const b=document.createElement('button');b.className='corner';
   b.innerHTML='<span class="em">'+c.em+'</span><span class="cn">'+c.name+'</span><span class="cd">'+c.desc+'</span>';
   b.onclick=()=>show(c.id);grid.appendChild(b);});
-
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function daySeed(){const d=new Date();return d.getFullYear()*372+(d.getMonth()+1)*31+d.getDate();}
 
 /* ---------- ไพ่ทาโรต์ ---------- */
-let tmode=1, tState='ready';
+let tmode=1,tState='ready';
 const deck=document.getElementById('deck'),reading=document.getElementById('reading'),
       drawBtn=document.getElementById('drawBtn'),cardsLead=document.getElementById('cardsLead');
 function setMode(m){tmode=m;tState='ready';
   document.getElementById('mode1').classList.toggle('on',m===1);
   document.getElementById('mode3').classList.toggle('on',m===3);
-  cardsLead.textContent = m===1
-    ? 'ตั้งจิตถึงสิ่งที่อยากรู้ แล้วจั่วไพ่วันนี้นะ ✦'
-    : 'ตั้งจิตถึงเรื่องที่อยากรู้ แล้วจั่ว 3 ใบ อดีต–ปัจจุบัน–อนาคต ✦';
+  cardsLead.textContent=m===1?'ตั้งจิตถึงสิ่งที่อยากรู้ แล้วจั่วไพ่นะ ✦':'จั่ว 3 ใบ อดีต–ปัจจุบัน–อนาคต ✦';
   reading.innerHTML='';drawBtn.textContent='จั่วไพ่ ✦';buildDeck();}
 function buildDeck(){deck.innerHTML='';
-  for(let i=0;i<tmode;i++){
-    const wrap=document.createElement('div');
+  for(let i=0;i<tmode;i++){const wrap=document.createElement('div');
     wrap.style.cssText='display:flex;flex-direction:column;align-items:center';
-    if(tmode===3){const pl=document.createElement('div');pl.className='tpos';pl.textContent=MU.posLabels[i];wrap.appendChild(pl);}
+    if(tmode===3){const pl=document.createElement('div');pl.className='tpos';pl.textContent=posLabels[i];wrap.appendChild(pl);}
     const c=document.createElement('div');c.className='tcard'+(tmode===3?' sm':'');
     c.innerHTML='<div class="ti"><div class="tface tback"><span>✦</span></div>'+
       '<div class="tface tfront"><div class="tico"></div><div class="tname"></div><div class="torient"></div></div></div>';
     wrap.appendChild(c);deck.appendChild(wrap);}}
-function drawOne(){return {card:MU.tarot[Math.floor(Math.random()*MU.tarot.length)],rev:Math.random()<0.5};}
-function fillCard(el,c,rev){
-  el.querySelector('.tico').textContent=c.ico;
+function drawOne(){return {card:TAROT[Math.floor(Math.random()*TAROT.length)],rev:Math.random()<0.5};}
+function fillCard(el,c,rev){el.querySelector('.tico').textContent=c.ico;
   el.querySelector('.tico').style.transform=rev?'rotate(180deg)':'none';
-  el.querySelector('.tname').textContent=c.n;
-  el.querySelector('.torient').textContent=rev?'(หัวกลับ)':'(ตั้งตรง)';}
+  el.querySelector('.tname').textContent=c.n;el.querySelector('.torient').textContent=rev?'(หัวกลับ)':'(ตั้งตรง)';}
 function aspects(r){return r.rev?r.card.rev:r.card.up;}
-function draw(){
-  if(tState==='done'){setMode(tmode);return;}
-  const cards=[...deck.querySelectorAll('.tcard')];
-  const results=cards.map(()=>drawOne());
-  cards.forEach((el,i)=>{fillCard(el,results[i].card,results[i].rev);
-    setTimeout(()=>el.classList.add('flipped'),i*280);});
-  setTimeout(()=>renderReading(results),cards.length*280+450);
+function draw(){if(tState==='done'){setMode(tmode);return;}
+  const cards=[...deck.querySelectorAll('.tcard')];const results=cards.map(()=>drawOne());
+  cards.forEach((el,i)=>{fillCard(el,results[i].card,results[i].rev);setTimeout(()=>el.classList.add('flipped'),i*280);});
+  setTimeout(()=>renderTarot(results),cards.length*280+450);
   tState='done';drawBtn.textContent='จั่วใหม่ ✦';}
-function renderReading(results){
-  reading.innerHTML='';
-  if(tmode===1){
-    const r=results[0],m=aspects(r),o=r.rev?'หัวกลับ':'ตั้งตรง';
+function renderTarot(results){reading.innerHTML='';
+  if(tmode===1){const r=results[0],m=aspects(r),o=r.rev?'หัวกลับ':'ตั้งตรง';
     const b=document.createElement('div');b.className='rblock';
     b.innerHTML='<div class="rh">'+r.card.ico+' '+r.card.n+' <small>· '+o+'</small></div>'+
-      '<div class="rrow"><b>คำสำคัญ:</b> '+m.key+'</div>'+
+      '<div class="rrow"><b>ภาพรวม:</b> '+m.key+'</div>'+
       '<div class="rrow"><b>❤️ ความรัก:</b> '+m.love+'</div>'+
       '<div class="rrow"><b>💼 การงาน:</b> '+m.work+'</div>'+
+      '<div class="rrow"><b>💰 การเงิน:</b> '+m.money+'</div>'+
       '<div class="rrow"><b>🌱 สุขภาพใจ:</b> '+m.heart+'</div>'+
       '<div class="rrow"><b>✦ คำแนะนำ:</b> '+m.adv+'</div>';
     reading.appendChild(b);
-  }else{
-    results.forEach((r,i)=>{const m=aspects(r),o=r.rev?'หัวกลับ':'ตั้งตรง';
-      const b=document.createElement('div');b.className='rblock';
-      b.innerHTML='<div class="rh">'+MU.posLabels[i]+' — '+r.card.ico+' '+r.card.n+' <small>· '+o+'</small></div>'+
-        '<div class="rrow"><b>คำสำคัญ:</b> '+m.key+'</div>'+
-        '<div class="rrow"><b>❤️ ความรัก:</b> '+m.love+'</div>'+
-        '<div class="rrow"><b>✦ คำแนะนำ:</b> '+m.adv+'</div>';
-      reading.appendChild(b);});
-  }
-  const note=document.createElement('div');note.className='rnote';
-  note.textContent=pick(MU.sweetNotes);reading.appendChild(note);}
+  }else{results.forEach((r,i)=>{const m=aspects(r),o=r.rev?'หัวกลับ':'ตั้งตรง';
+    const b=document.createElement('div');b.className='rblock';
+    b.innerHTML='<div class="rh">'+posLabels[i]+' — '+r.card.ico+' '+r.card.n+' <small>· '+o+'</small></div>'+
+      '<div class="rrow"><b>ภาพรวม:</b> '+m.key+'</div>'+
+      '<div class="rrow"><b>💼 การงาน:</b> '+m.work+'</div>'+
+      '<div class="rrow"><b>❤️ ความรัก:</b> '+m.love+'</div>'+
+      '<div class="rrow"><b>✦ คำแนะนำ:</b> '+m.adv+'</div>';
+    reading.appendChild(b);});}
+  const note=document.createElement('div');note.className='rnote';note.textContent=pick(sweetNotes);reading.appendChild(note);}
 document.getElementById('mode1').onclick=()=>setMode(1);
 document.getElementById('mode3').onclick=()=>setMode(3);
-drawBtn.onclick=draw;
-setMode(1);
+drawBtn.onclick=draw;setMode(1);
+
+/* ---------- เซียมซี ---------- */
+document.getElementById('siamBtn').onclick=function(){
+  const s=pick(SIAMSI),box=document.getElementById('siamReading');
+  box.innerHTML='<div class="rblock"><div class="rh">🥠 เซียมซีใบที่ '+s.no+' <small>· '+s.lv+'</small></div>'+
+    '<div style="text-align:center;margin:2px 0 8px"><span class="badge">'+s.lv+'</span></div>'+
+    '<div class="rrow"><b>💼 การงาน:</b> '+s.work+'</div>'+
+    '<div class="rrow"><b>💰 การเงิน:</b> '+s.money+'</div>'+
+    '<div class="rrow"><b>❤️ ความรัก:</b> '+s.love+'</div>'+
+    '<div class="rrow"><b>🌱 สุขภาพ:</b> '+s.health+'</div>'+
+    '<div class="rrow"><b>✦ คำแนะนำ:</b> '+s.adv+'</div></div>'+
+    '<div class="rnote">'+pick(sweetNotes)+'</div>';
+  this.textContent='🥠 เขย่าใหม่';};
 
 /* ---------- ดูดวงวันนี้ ---------- */
-function renderFortune(){const s=daySeed();
-  const d=new Date();document.getElementById('fdate').textContent=
-    'ประจำวันที่ '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
-  document.getElementById('fOverall').textContent=MU.overall[s%MU.overall.length];
-  document.getElementById('fLove').textContent=MU.love[(s+3)%MU.love.length];
-  const col=MU.colors[(s+5)%MU.colors.length];
-  document.getElementById('fColor').innerHTML='<span class="swatch" style="background:'+col.c+'"></span>'+col.n;
-  document.getElementById('fNum').textContent=(s+7)%10;
-}
+function renderDaily(){const s=daySeed(),d=new Date();
+  document.getElementById('fdate').textContent='ประจำวันที่ '+d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear();
+  const col=DAILY.colors[(s+5)%DAILY.colors.length];
+  document.getElementById('dailyReading').innerHTML=
+    '<div class="rblock">'+
+    '<div class="rrow"><b>🔮 ภาพรวม:</b> '+DAILY.overall[s%DAILY.overall.length]+'</div>'+
+    '<div class="rrow"><b>💼 การงาน:</b> '+DAILY.work[(s+1)%DAILY.work.length]+'</div>'+
+    '<div class="rrow"><b>💰 การเงิน:</b> '+DAILY.money[(s+2)%DAILY.money.length]+'</div>'+
+    '<div class="rrow"><b>❤️ ความรัก:</b> '+DAILY.love[(s+3)%DAILY.love.length]+'</div>'+
+    '<div class="rrow"><b>🌱 สุขภาพ:</b> '+DAILY.health[(s+4)%DAILY.health.length]+'</div>'+
+    '</div>'+
+    '<div class="rblock"><div class="frow inline"><span><b style="color:var(--purple)">🌈 สีมงคล</b></span>'+
+      '<span><span class="swatch" style="background:'+col.c+'"></span>'+col.n+'</span></div>'+
+    '<div class="frow inline" style="margin-top:8px"><span><b style="color:var(--purple)">🔢 เลขนำโชค</b></span>'+
+      '<span class="luckynum">'+((s+7)%10)+'</span></div></div>';}
 
-/* ---------- ขอพร ---------- */
-function launchWish(){
-  const s=document.createElement('div');s.className='wishstar';document.body.appendChild(s);
-  setTimeout(()=>s.remove(),1800);
-  document.getElementById('wishMsg').textContent=pick(MU.wishReplies);
-  document.getElementById('wishInput').value='';
-}
-document.getElementById('wishBtn').onclick=launchWish;
-document.getElementById('wishInput').addEventListener('keydown',e=>{if(e.key==='Enter')launchWish();});
+/* ---------- เลขศาสตร์ ---------- */
+function lifePath(str){let s=str.replace(/[^0-9]/g,'').split('').reduce((a,b)=>a+(+b),0);
+  while(s>9)s=(''+s).split('').reduce((a,b)=>a+(+b),0);return s||1;}
+document.getElementById('numBtn').onclick=function(){
+  const v=document.getElementById('birth').value;const box=document.getElementById('numReading');
+  if(!v){box.innerHTML='<div class="rnote">ใส่วันเกิดก่อนนะ ✦</div>';return;}
+  const n=lifePath(v),info=NUMERO[n];
+  box.innerHTML='<div class="rblock"><div class="rh">🔢 เลขชีวิตของหนูคือ <b style="color:var(--gold)">'+n+'</b></div>'+
+    '<div class="rrow"><b>บุคลิก:</b> '+info.t+'</div>'+
+    '<div class="rrow"><b>💼 การงาน:</b> '+info.work+'</div>'+
+    '<div class="rrow"><b>💰 การเงิน:</b> '+info.money+'</div>'+
+    '<div class="rrow"><b>❤️ ความรัก:</b> '+info.love+'</div>'+
+    '<div class="rrow"><b>✦ คำแนะนำ:</b> '+info.adv+'</div></div>'+
+    '<div class="rnote">'+pick(sweetNotes)+'</div>';};
 
 /* ---------- ราศี ---------- */
 let zsys='intl';
-function renderZodiac(){
-  const z=MU.zodiac[zsys];
-  document.getElementById('belSym').textContent=z.bel.sym;
-  document.getElementById('belName').textContent=z.bel.name;
-  document.getElementById('gibSym').textContent=z.gib.sym;
-  document.getElementById('gibName').textContent=z.gib.name;
+function renderZodiac(){const z=ZODIAC[zsys];
+  document.getElementById('belSym').textContent=z.bel.sym;document.getElementById('belName').textContent=z.bel.name;
+  document.getElementById('gibSym').textContent=z.gib.sym;document.getElementById('gibName').textContent=z.gib.name;
   document.getElementById('zpct').textContent=z.percent+' เข้ากัน';
-  document.getElementById('zmsg').textContent=z.msg;
-  document.getElementById('zsysnote').textContent=z.note;
+  document.getElementById('zmsg').textContent=z.msg;document.getElementById('zsysnote').textContent=z.note;
   document.getElementById('tabIntl').classList.toggle('on',zsys==='intl');
-  document.getElementById('tabThai').classList.toggle('on',zsys==='thai');
-}
+  document.getElementById('tabThai').classList.toggle('on',zsys==='thai');}
 document.getElementById('tabIntl').onclick=()=>{zsys='intl';renderZodiac();};
 document.getElementById('tabThai').onclick=()=>{zsys='thai';renderZodiac();};
 </script>
