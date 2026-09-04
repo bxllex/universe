@@ -125,13 +125,16 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.
 .slot .snm{font-size:9px;color:var(--gold)}
 .slot.filled{border-style:solid;border-color:var(--gold);background:rgba(244,213,141,.08);box-shadow:0 0 16px rgba(244,213,141,.15)}
 .slot.filled .sq{color:#fff}
-.fanwrap{width:100%;display:flex;justify-content:center;margin:18px 0 4px}
-.fan{position:relative;width:100%;max-width:540px;height:172px}
-.fanc{position:absolute;bottom:0;left:50%;width:62px;height:96px;transform-origin:bottom center;
-  cursor:pointer;transition:transform .25s ease,opacity .45s ease;
-  transform:translateX(-50%) rotate(var(--ang))}
-.fanc:hover{transform:translateX(-50%) translateY(-18px) rotate(var(--ang));z-index:60}
-.fanc.gone{opacity:0;pointer-events:none;transform:translateX(-50%) translateY(-46px) rotate(var(--ang))}
+.fanwrap{width:100%;max-width:520px;margin:14px auto 4px;overflow-x:auto;overflow-y:hidden;
+  -webkit-overflow-scrolling:touch;padding:16px 8px 18px;scrollbar-width:thin}
+.fanwrap::-webkit-scrollbar{height:6px}
+.fanwrap::-webkit-scrollbar-thumb{background:rgba(179,157,219,.4);border-radius:10px}
+.fan{display:flex;gap:10px;width:max-content;margin:0 auto;padding:0 6px}
+.fanc{flex:0 0 auto;width:78px;height:120px;cursor:pointer;
+  transition:transform .25s ease,opacity .45s ease}
+.fanc:hover{transform:translateY(-12px)}
+.fanc.gone{opacity:0;pointer-events:none;transform:translateY(-24px) scale(.85)}
+.fanhint{font-size:11px;color:var(--muted);margin-top:2px;opacity:.8}
 .zone-lb{font-family:'Prompt',sans-serif;font-size:12px;color:var(--gold);letter-spacing:.04em;margin:14px 0 2px;opacity:.9}
 .picktip{color:var(--gold);font-family:'Prompt',sans-serif;font-size:13px;margin-top:6px;min-height:18px}
 .rdesc{font-size:13px;line-height:1.75;color:#e9e4f7;margin-bottom:8px}
@@ -194,7 +197,7 @@ h2.title{font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(21px,5.
   <div class="zone-lb">✦ ไพ่ที่หนูจะได้</div>
   <div class="slots" id="slots"></div>
   <div class="picktip" id="picktip"></div>
-  <div class="zone-lb">👇 กองไพ่ทั้งสำรับ — แตะเลือกจากตรงนี้</div>
+  <div class="zone-lb">👇 กองไพ่ทั้งสำรับ — ปัดซ้าย-ขวาเพื่อดู แล้วแตะเลือก</div>
   <div class="fanwrap"><div class="fan" id="fan"></div></div>
   <button class="btn" id="restartBtn" style="display:none">สับไพ่ใหม่ ✦</button>
   <div class="reading" id="reading"></div>
@@ -530,10 +533,9 @@ function buildSlots(n){slots.innerHTML='';
     s.innerHTML='<div class="sp">'+POS[n][i]+'</div><div class="sq">?</div><div class="snm"></div>';
     slots.appendChild(s);}}
 function buildFan(){fan.innerHTML='';deckOrder=shuffle([...Array(TAROT.length).keys()]);
-  const N=Math.min(21,TAROT.length),spread=64,start=-spread/2,step=N>1?spread/(N-1):0;
-  for(let i=0;i<N;i++){const ang=start+step*i;
+  const N=TAROT.length; // โชว์ทั้งสำรับ เลื่อนดูได้
+  for(let i=0;i<N;i++){
     const c=document.createElement('div');c.className='tcard fanc';
-    c.style.setProperty('--ang',ang+'deg');c.style.zIndex=i;
     c.innerHTML='<div class="ti"><div class="tface tback"><span>✦</span></div>'+
       '<div class="tface tfront"><div class="tico"></div><div class="tname"></div><div class="torient"></div></div></div>';
     c.onclick=(function(el,slot){return function(){pickCard(el,slot);};})(c,i);
